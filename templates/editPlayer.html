@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Player{% endblock %}
+
+{% block activeEntry %} {% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}class="active"{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+{% block content %}
+
+<div class="container">
+    <p></p>
+
+    <form action="" method="POST" novalidate>
+        {{ editPlayerForm.hidden_tag() }}
+
+        <label> {{ editPlayerForm.playerName.label }}</label>
+        {{ editPlayerForm.playerName(class_="form-control form-control-sm") }}
+        {% for error in editPlayerForm.playerName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+        <p></p>
+
+      <div class="form-group">
+          <div class="custom-control custom-switch">
+                {{ editPlayerForm.retiree(class_="custom-control-input") }}
+              <label class="custom-control-label" for="retiree">{{  editPlayerForm.retiree.label }}</label>
+          </div>
+      </div>
+
+        {% for error in editPlayerForm.retiree.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+         <p></p>
+        <label> {{  editPlayerForm.comment.label }}</label>
+        {{ editPlayerForm.comment(class_="form-control form-control-sm") }}
+        {% for error in editPlayerForm.comment.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+         <p></p>
+        {{ editPlayerForm.submitEdit(class_='btn btn-primary') }}
+    </form>
+</div>
+
+{% endblock %}

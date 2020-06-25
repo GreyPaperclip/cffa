@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Games{% endblock %}
+
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}active{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#NewPlayer">Add Player</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#EditPlayer">Edit Player</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#RetirePlayer">Retire Player</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#ReactivatePlayer">Reactivate Player</a>
+  </li>
+</ul>
+
+<div id="ManagePlayers" class="tab-content">
+    <p>
+    </p>
+
+    <div id="NewPlayer" class="tab-pane fade show active">
+        <form action="" method="post">
+            {{  addPlayerForm.hidden_tag() }}
+            <p>
+            Enter new player nickname:
+            {{  addPlayerForm.playerName }}
+            {% for error in addPlayerForm.playerName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            [Optional] Enter a comment about the player:
+            {{  addPlayerForm.comment }}
+            <p>{{ addPlayerForm.submitNew(class_='btn btn-primary') }}</p>
+        </form>
+    </div>
+
+    <div id="EditPlayer" class="tab-pane fade">
+<form action=" {{  url_for('editSelectPlayer') }}" method="post">
+    {{  editPlayerForm.hidden_tag() }}
+    <p>
+    {{  editPlayerForm.oldPlayer }}
+    <p>
+    {{ editPlayerForm.submitEditPlayer(class_='btn btn-primary') }}</p>
+</form>
+    </div>
+
+    <div id="RetirePlayer" class="tab-pane fade">
+        <form action=" {{  url_for('retirePlayer') }}" method="post">
+            {{ retirePlayerForm.hidden_tag() }}
+            <p>
+                Select player to retire:
+            {{ retirePlayerForm.retirePlayer }}
+            <p>
+            {{ retirePlayerForm.submitRetire(class_='btn btn-danger') }}</p>
+        </form>
+    </div>
+
+    <div id="ReactivatePlayer" class="tab-pane fade">
+        <form action=" {{  url_for('reactivatePlayer') }}" method="post">
+            {{ reactivatePlayerForm.hidden_tag() }}
+            <p>
+                Select player to reactivate:
+            {{ reactivatePlayerForm.reactivatePlayer }}
+            <p>
+            {{ reactivatePlayerForm.submitReactivate(class_='btn btn-danger') }}</p>
+        </form>
+    </div>
+
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+
+
+{% endblock %}

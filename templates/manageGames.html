@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Games{% endblock %}
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}active{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#NewGame">New Game</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#EditGame">Edit Game</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#DeleteGame">Delete Game</a>
+  </li>
+</ul>
+
+<div id="ManageGames" class="tab-content">
+    <p></p>
+    <div class="tab-pane fade show active" id="NewGame">
+        <form action="" method="post">
+            <fieldset class="form-group">
+            {{ form.hidden_tag() }}
+            <legend>Select Number of players</legend>
+                {% for subfield in form.noPlayers %}
+                    <div class="form-check">
+                        {{ subfield(class_="form-check-input") }}
+                        {{ subfield.label(class_="form-check-label") }}
+                    </div>
+                {% endfor %}
+            <p></p>
+            {{ form.submit(class_='btn btn-primary') }}
+            </fieldset>
+        </form>
+    </div>
+
+
+    <div id="EditGame" class="tab-pane fade" width="66%">
+        <form action="{{ url_for('editGame') }}" method="post">
+            {{ editGameform.hidden_tag() }}
+            {{ editGameform.game(class_="form-control") }}
+            <p></p>
+            {{ editGameform.submitEdit(class_='btn btn-primary') }}
+        </form>
+    </div>
+
+    <div id="DeleteGame" class="tab-pane fade" width="66%">
+        <form action="{{ url_for('deleteGame') }}" method="post">
+            {{ deleteGameform.hidden_tag() }}
+            {{ deleteGameform.game(class_="form-control") }}
+            <p></p>
+            {{ deleteGameform.submitDel(class_='btn btn-danger') }}
+        </form>
+    </div>
+
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+
+
+{% endblock %}

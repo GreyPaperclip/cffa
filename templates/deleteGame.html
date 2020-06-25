@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Game Delete{% endblock %}
+
+{% block activeEntry %} {% endblock %}
+{% block activeGames %}class="active"{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+{% block content %}
+
+<div class="container">
+<div>
+    <p class="text-secondary">
+    Game Cost: £
+    {{ gamedetails.gameCost.to_decimal()|round(2) }}
+    </p>
+    <p class="text-secondary"> Game Date:
+    {{ gamedetails.gameDate }}
+    </p>
+    <p class="text-info">Booker:
+    {{ gamedetails.booker }}
+    </p>
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.confirmDel(class_='btn btn-danger') }}
+        <p></p>
+    </form>
+    <div id="player-fieldset">
+        <table id="delgame" class="table table-hover" width="95%">
+            <thead> <tr>
+            <th>Played</th>
+            <th>Booker</th>
+            <th>Player Name</th>
+            <th>Guests</th>
+        </tr> </thead>
+            <tbody>
+                {% for p in gamedetails.playerList %}
+                    <tr>
+                        <td class="table-info"> {% if p.playedLastGame %} &#10004; {% else %} &#10008; {% endif %}</td>
+                        <td> {% if p.pitchBooker %} &#10004; {% else %} &#10008; {% endif %} </td>
+                        <td> {{ p.playerName }}</td>
+                        <td> {{ p.guests }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready( function () {
+    $('#delgame').DataTable();
+} );
+
+</script>
+
+{% endblock %}

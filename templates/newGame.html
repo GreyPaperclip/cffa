@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}New Game{% endblock %}
+
+{% block activeEntry %} {% endblock %}
+{% block activeGames %}class="active"{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+{% block content %}
+
+<div class="container">
+
+    <h4> There must be a total of {{ noOfPlayers }} players selected including guests</h4>
+
+    <form action="" method="POST" novalidate>
+    <fieldset class="form-group">
+        {{ form.hidden_tag() }}
+
+        <label> {{ form.gameCost.label }}</label>
+        {{ form.gameCost(class_="form-control form-control-sm") }}
+        {% for error in form.gameCost.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+
+        <label> {{  form.gameDate.label }}</label>
+        {{ form.gameDate(class_="form-control form-control-sm") }}
+        {% for error in form.gameDate.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+        <p></p>
+
+        {% for error in form.playerList.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+        <div id="player-fieldset">
+            <table id="newgame" class="table table-hover" width="85%">
+                <thead>
+                    <th>Played</th>
+                    <th>Booker</th>
+                    <th>Player Name</th>
+                    <th>Guests</th>
+                </thead>
+                <tbody>
+                    {% for p in form.playerList %}
+                        <tr>
+                            {{ p.hidden_tag() }}
+                            <td class="table-info text-center">
+                                <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        {{ p.playedLastGame(class_="custom-control-input") }}
+                                        <label class="custom-control-label" for="{{ p.playedLastGame.name }}"></label>
+                                    </div>
+                                </div>
+                            </td>
+                            {% for error in p.playedLastGame.errors %}
+                                <span class="badge badge-warning">[{{ error }}]</span>
+                            {% endfor %}
+                            <td class="table-info text-center">
+                                 <div class="form-group">
+                                    <div class="custom-control custom-switch">
+                                        {{ p.pitchBooker(class_="custom-control-input") }}
+                                        <label class="custom-control-label" for="{{ p.pitchBooker.name }}"></label>
+                                    </div>
+                                 </div>
+                            </td>
+                            {% for error in p.pitchBooker.errors %}
+                                <span class="badge badge-warning">[{{ error }}]</span>
+                            {% endfor %}
+                            <td class="table-info"> {{ p.playerName(size=16, maxlength=32, class_="form-control form-control-sm") }}</td>
+                            {% for error in p.playerName.errors %}
+                                    <span class="badge badge-warning">[{{ error }}]</span>
+                            {% endfor %}
+                            <td class="table-info"> {{ p.guests(size=2, class_="form-control form-control-sm") }}</td>
+                            {% for error in p.guests.errors %}
+                                <span class="badge badge-warning">[{{ error }}]</span>
+                            {% endfor %}
+                      </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ form.submit(class_='btn btn-primary') }}
+    </fieldset>
+    </form>
+
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+
+<script>
+    $(document).ready( function () {
+    $('#newgame').DataTable( { "pageLength": 25 });
+} );
+</script>
+
+{% endblock %}

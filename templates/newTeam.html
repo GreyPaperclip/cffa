@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}New Team{% endblock %}
+
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+    <div class="jumbotron">
+        <h1 class="display-3">Welcome to Casual Football Finance Manager!</h1>
+        <p class="lead">Track payments and debits for non-subscription managed team games</p>
+        <hr class="my-4">
+        <p>Please register your team name to get started.</p>
+    </div>
+
+<form action="" method="post">
+    {{ addTeamForm.hidden_tag() }}
+    <p>
+        Enter your new team name:
+        {{ addTeamForm.teamName(class_="form-control form-control-sm") }}
+        {% for error in addTeamForm.teamName.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+        <p>
+    <p>{{ addTeamForm.submitNewTeam(class_='btn btn-primary') }}</p>
+    </p>
+
+
+</form>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+{% endblock %}

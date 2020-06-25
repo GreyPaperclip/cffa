@@ -1,0 +1,38 @@
+{% extends 'bootstrap/base.html' %}
+{% block title %} {% if title %}{{ title }} - Middle Aged Football Manager
+    {% else %}{{ _('Welcome to Middle Ageed Football Manager') }}{% endif %}
+{% endblock %}
+
+
+
+<script type="text/javascript" src="static/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="static/jquery.tablesorter.min.js"></script>
+<script type="text/javascript" src="static/jquery.tablesorter.widgets.js"></script>
+<script src="https://kit.fontawesome.com/4bf2fcca04.js"></script>
+
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+{# application content needs to be provided in the app_content block #}
+    {% block app_content %}
+
+    <ul class="topmenu">
+        <li><a {% block activeEntry %}{% endblock %} href="{{ url_for('entryScreen') }}"><i class="fa fa-table"></i></a></li>
+        <li><a {% block activeGames %}{% endblock %} href="{{ url_for('manageGames') }}"><i class="fa fa-futbol"></i></a></li>
+        <li><a {% block activePlayers %}{% endblock %} href="{{ url_for('managePlayers') }}"><i class="fa fa-running"></i></a></li>
+        <li><a {% block activeTransactions %}{% endblock %} href="{{ url_for('manageTransactions') }}"><i class="fa fa-file-invoice-dollar"></i></a></li>
+        <li><a {% block activeSettings %}{% endblock %} href="{{ url_for('manageSettings') }}"><i class="fa fa-cogs"></i></a></li>
+        <li style="float:right"><a id="qsLogoutBtn"
+                                   class="btn btn-primary btn-lg btn-logout btn-block"
+                                   href="{{ url_for('logout') }}"><i class="fa fa-sign-out-alt"></i></a></li>
+    </ul>
+    <br>
+
+    {% endblock %}
+{% endblock %}

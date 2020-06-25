@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://kit.fontawesome.com/4bf2fcca04.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <a class="navbar-brand" href="{{ url_for('entryScreen') }}">CFFA</a>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item {% block activeEntry %}{% endblock %} ">
+        <a class="nav-link" href="{{ url_for('entryScreen') }}"><i class="fa fa-table"></i><span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item {% block activeGames %}{% endblock %}">
+        <a class="nav-link" href="{{ url_for('manageGames') }}"><i class="fa fa-futbol"></i></a>
+      </li>
+      <li class="nav-item {% block activePlayers %}{% endblock %}">
+        <a class="nav-link" href="{{ url_for('managePlayers') }}"><i class="fa fa-running"></i></a>
+      </li>
+      <li class="nav-item {% block activeTransactions %}{% endblock %}">
+        <a class="nav-link" href="{{ url_for('manageTransactions') }}"><i class="fa fa-file-invoice-dollar"></i></a>
+      </li>
+      <li class="nav-item {% block activeSettings %}{% endblock %}">
+        <a class="nav-link" href="{{ url_for('manageSettings') }}"><i class="fa fa-cogs"></i></a>
+      </li>
+    </ul>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="nav navbar-nav mr-auto w-100 justify-content-end">
+        <li class="nav-item">
+            <h5 class="navbar-brand"> Signed in as {{ cffauser }} </h5>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </li>
+    </ul>
+  </div>
+</nav>
+
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <div class="alert alert-dismissible alert-success">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+
+
+
+</body>
+</html>

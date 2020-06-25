@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Settings{% endblock %}
+
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}active{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#settings">Settings</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#export">Export DB</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#import">Recover DB</a>
+  </li>
+</ul>
+
+<div id="ManageSettings" class="tab-content">
+    <p></p>
+    <div id="settings" class="tab-pane fade show active">
+        <form action="" method="post">
+            {{  settingsChangeForm.hidden_tag() }}
+            <p>
+            Enter new team name:
+            {{  settingsChangeForm.teamName(class_="form-control form-control-sm") }}
+            {% for error in settingsChangeForm.teamName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            <p>{{ settingsChangeForm.submitTeam(class_='btn btn-primary') }}</p>
+        </form>
+    </div>
+
+    <div id="export" class="tab-pane fade">
+        <form action="{{ url_for('downloadJSON') }}" method="post">
+            {{ dbExportForm.hidden_tag() }}
+            {{ dbExportForm.submitDownload(class_='btn btn-danger') }}
+            <p>
+        </form>
+    </div>
+
+    <div id="import" class="tab-pane fade">
+        <form action="{{  url_for('uploadJSON') }}" method="post">
+            {{ dbRecoveryForm.hidden_tag() }}
+            WARNING: Not implemented!
+            <p> Select CFFA archive file :
+            <div class="form-group">
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    {{  dbRecoveryForm.selectArchiveFile(class_="custom-file-input") }} </p>
+                    <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
+                </div>
+            <div class="input-group-append">
+                <span class="input-group-text" id="">Upload</span>
+            </div>
+            </div>
+            </div>
+            {% for error in dbRecoveryForm.selectArchiveFile.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            {{ dbRecoveryForm.submitRecovery(class_='btn btn-danger') }}
+            <p></p>
+        </form>
+    </div>
+
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+{% endblock %}

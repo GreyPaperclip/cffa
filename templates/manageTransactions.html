@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Transactions{% endblock %}
+
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}active{% endblock %}
+{% block activeSettings %}{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#newTransaction">New Transaction</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#editTransaction">Edit Transaction</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#autoPay">AutoPay</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#viewAll">View All Transactions</a>
+  </li>
+</ul>
+
+<div id="ManageTransactions" class="tab-content">
+    <p></p>
+
+    <div id="newTransaction" class="tab-pane fade show active">
+        <form action="" method="post">
+            {{  addTransactionForm.hidden_tag() }}
+            <p>
+            Select Player:
+            {{  addTransactionForm.player }}
+            {% for error in addTransactionForm.player.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            Select Date:
+            {{  addTransactionForm.transactionDate(class_="form-control form-control-sm") }}
+            {% for error in addTransactionForm.transactionDate.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            Enter Description (eg: Cash, Transfer, Curry Debt...):
+            {{ addTransactionForm.type(class_="form-control form-control-sm") }}
+            {% for error in addTransactionForm.type.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            Enter amount. Positive values are credit, Negative debits:
+            {{  addTransactionForm.amount(class_="form-control form-control-sm") }}
+            {% for error in addTransactionForm.amount.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>{{ addTransactionForm.submitTrans(class_='btn btn-primary') }}</p>
+        </form>
+    </div>
+
+    <div id="editTransaction" class="tab-pane fade">
+        <p> Once a transaction is added it cannot be edited or removed. </p>
+        <p> Add new transactions to adjustment balances and correct errors!</p>
+    </div>
+
+    <div id="autoPay" class="tab-pane fade">
+        <form action=" {{  url_for('autoPay') }}" method="post">
+            {{ quickAutoPayForm.hidden_tag() }}
+            <p> Player Name: {{  autoPayDetails.player }} </p>
+            <p> Type : {{  autoPayDetails.type }}</p>
+            <p> Amount : {{ autoPayDetails.amount }}</p>
+            <p> Date : {{ autoPayDetails.transactionDate }} </p>
+            {{ quickAutoPayForm.submitAutoPay(class_='btn btn-primary') }}
+            <p>
+        </form>
+    </div>
+
+    <div id="viewAll" class="tab-pane fade">
+        <table id="allTransactions" class="table table-hover" width="95%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Player</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in allTransactions %}
+                <tr>
+                    <td class="table-info">{{ transaction.get("Date").year }}-{{ transaction.get("Date").month }}-{{ transaction.get("Date").day }}</td>
+                    <td>{{ transaction.get("Player") }}</td>
+                    <td>{{ transaction.get("Type") }}</td>
+                    <td>£{{ (transaction.get("Amount").to_decimal()|round(2)) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready( function () {
+    $('#allTransactions').DataTable({ "pageLength": 25 });
+} );
+</script>
+
+{% endblock %}

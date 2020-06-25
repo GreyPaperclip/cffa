@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}CFFA Home{% endblock %}
+{% block activeEntry %}active{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#Active">Recent Balances</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#All">Full Player Summary</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#RecentGames">Recent Games</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#AllGames">All Games</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#RecentTransactions">Recent Transactions</a>
+  </li>
+</ul>
+
+<div id="SummaryContent" class="tab-content">
+  <div class="tab-pane fade show active" id="Active">
+      <table id="players" class="table table-hover" width="80%">
+          <thead> <tr>
+              <th>Name</th>
+              <th>Balance</th>
+          </tr> </thead>
+          <tbody>
+          {% for player in playerSummaries %}
+              <tr>
+                  <td class="table-info">{{ player.get("playerName") }}</td>
+                  <td>£{{ (player.get("balance").to_decimal()|round(2)) }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+  </div>
+  <div class="tab-pane fade" id="All">
+     <table id="allplayers" class="table table-hover" width="95%">
+          <thead> <tr>
+              <th>Name</th>
+              <th>Balance</th>
+              <th>Attended</th>
+              <th>Last Played</th>
+              <th>Total Payments</th>
+              <th>Cost of Games</th>
+          </tr> </thead>
+          <tbody>
+          {% for player in allPlayers %}
+              <tr>
+                  <td class="table-info">{{ player.get("playerName") }}</td>
+                  <td>£{{ (player.get("balance").to_decimal()|round(2)) }}</td>
+                  <td>{{ player.get("gamesAttended") }}</td>
+                  <td>{{ player.get("lastPlayed").year }}/{{ player.get("lastPlayed").month }}/{{ player.get("lastPlayed").day }}</td>
+                  <td>£{{ (player.get("moniespaid").to_decimal()|round(2)) }}</td>
+                  <td>£{{ (player.get("gamesCost").to_decimal()|round(2)) }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+  </div>
+  <div class="tab-pane fade" id="RecentGames">
+     <table id="recentgames" class="table table-hover" width="95%">
+           <thead>
+                <tr>
+                    <th>Match Date</th>
+                    <th>No of Players</th>
+                    <th>Game Cost</th>
+                    <th>Cost per Player</th>
+                    <th>Players</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in recentGames %}
+                <tr>
+                    <td class="table-info">{{ game.get("Date of Game dd-MON-YYYY").year }}/{{ game.get("Date of Game dd-MON-YYYY").month }}/{{ game.get("Date of Game dd-MON-YYYY").day }}</td>
+                    <td>{{ game.get("Players") }}</td>
+                    <td>£{{ game.get("Cost of Game").to_decimal()|round(2) }}</td>
+                    <td>£{{ game.get("Cost Each").to_decimal()|round(2) }}</td>
+                    <td>{{ game.get("PlayerList") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  </div>
+  <div class="tab-pane fade" id="AllGames">
+     <table id="allgames" class="table table-hover" width="95%">
+            <thead>
+                <tr>
+                    <th>Match Date</th>
+                    <th>No of Players</th>
+                    <th>Game Cost</th>
+                    <th>Cost per Player</th>
+                    <th>Players</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in allGames %}
+                <tr>
+                    <td class="table-info">
+                        {{ game.get("Date of Game dd-MON-YYYY").year }}/{{ game.get("Date of Game dd-MON-YYYY").month }}/{{ game.get("Date of Game dd-MON-YYYY").day }}</td>
+                    <td>{{ game.get("Players") }}</td>
+                    <td>£{{ game.get("Cost of Game").to_decimal()|round(2) }}</td>
+                    <td>£{{ game.get("Cost Each").to_decimal()|round(2) }}</td>
+                    <td>{{ game.get("PlayerList") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  </div>
+  <div class="tab-pane fade" id="RecentTransactions">
+      <table id="recenttransactions" class="table table-hover" width="85%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Player</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td class="table-info">
+                        {{ transaction.get("Date").year }}/{{ transaction.get("Date").month }}/{{ transaction.get("Date").day }}</td>
+                    <td>{{ transaction.get("Player") }}</td>
+                    <td>{{ transaction.get("Type") }}</td>
+                    <td>£{{ (transaction.get("Amount").to_decimal()|round(2)) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+
+<script>
+    $(document).ready( function () {
+    $('#players').DataTable();
+} );
+
+    $(document).ready( function () {
+    $('#allplayers').DataTable();
+} );
+
+    $(document).ready( function () {
+    $('#recentgames').DataTable();
+} );
+
+    $(document).ready( function () {
+    $('#allgames').DataTable();
+} );
+
+    $(document).ready( function () {
+    $('#recenttransactions').DataTable();
+} );
+</script>
+
+
+
+
+
+{% endblock %}
+
