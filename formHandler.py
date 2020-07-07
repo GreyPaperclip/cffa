@@ -260,6 +260,16 @@ class EditUserAccess(FlaskForm):
     revoked = BooleanField('Revoked')
     submitEditUserAccess = SubmitField("Commit changes to user")
 
+class PopulateFromGoogleSheet(FlaskForm):
+    googleFile = FileField()
+    sheetName = StringField("Google Sheet Document Name")
+    transactionSheetName = StringField("Worksheet name with transactions")
+    gameSheetName = StringField("Worksheet name with games data")
+    summarySheetName = StringField("Worksheet name with summary data")
+    summarySheetStartRow = IntegerField("Start row on summary worksheet")
+    summarySheetEndRow = IntegerField("End row on summary worksheet")
+    submitUpload = SubmitField("Upload google sheet")
+
 def createLabelsForGames(games):
     # games is a list of dicts from DB not a game class
     gameLabels=[]

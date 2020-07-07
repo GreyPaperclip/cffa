@@ -24,6 +24,9 @@
   <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#import">Recover DB</a>
   </li>
+   <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#googlesheet">Import GoogleSheet</a>
+   </li>
 </ul>
 
 <div id="ManageSettings" class="tab-content">
@@ -74,6 +77,68 @@
         </form>
     </div>
 
+    <div id="googlesheet" class="tab-pane fade">
+        <form action="{{ url_for('uploadGoogleConnector') }}" method="post" enctype="multipart/form-data">
+            {{ dbImportGsheetForm.hidden_tag() }}
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        {{  dbImportGsheetForm.googleFile(class_="custom-file-input") }} </p>
+                        <label class="custom-file-label" for="googleFile">Upload Google Key File</label>
+                    </div>
+                </div>
+            </div>
+            {% for error in dbImportGsheetForm.googleFile.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+
+            <p> Google Sheet Name:
+            {{ dbImportGsheetForm.sheetName(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.sheetName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            <p> Transaction worksheet name
+            {{ dbImportGsheetForm.transactionSheetName(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.transactionSheetName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            <p> Game worksheet name
+            {{ dbImportGsheetForm.gameSheetName(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.gameSheetName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            <p> Summary worksheet name
+            {{ dbImportGsheetForm.summarySheetName(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarySheetName.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            <p> Summary data start row
+            {{ dbImportGsheetForm.summarySheetStartRow(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarySheetStartRow.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            <p> Summary data end row
+            {{ dbImportGsheetForm.summarySheetEndRow(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarySheetEndRow.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            </p>
+
+            {{ dbImportGsheetForm.submitUpload(class_='btn btn-danger') }}
+            <p></p>
+        </form>
+    </div>
+
 </div>
 </div>
 
@@ -81,5 +146,12 @@
 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="application/javascript">
+    $('input[type="file"]').change(function(e){
+        var fileName = e.target.files[0].name;
+        $('.custom-file-label').html(fileName);
+    });
+</script>
 
 {% endblock %}

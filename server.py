@@ -24,7 +24,9 @@ pp = pprint.PrettyPrinter()
 
 from cffadb import dbinterface
 import importExportCFFA
+import importDataFromGoogle
 import autometadata_handler
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__, static_url_path='/static', static_folder='./static')
 app.secret_key = constants.SECRET_KEY
@@ -184,6 +186,7 @@ def entryScreen():
 
 @app.route('/onboarding', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def onboarding():
     # display welcome screen and prompt user to create a new team name.
     app.logger.debug("Entering onboarding")
@@ -213,6 +216,7 @@ def onboarding():
 
 @app.route('/games', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def manageGames():
     # add game; edit game; delete game; dump games
     # handle guests too
@@ -240,6 +244,7 @@ def manageGames():
 
 @app.route('/newgame/<int:players>', methods=['GET','POST'])
 @requires_auth
+@requires_managerRole
 def newGame(players):
     app.logger.debug('Rendering newgame with players' + str(players))
     booker = session[constants.PROFILE_KEY].get('name')
@@ -262,6 +267,7 @@ def newGame(players):
 
 @app.route('/editgame', methods=['POST'])
 @requires_auth
+@requires_managerRole
 def editGame():
     games = ourDB.getAllGames()
     gameLabels = formHandler.createLabelsForGames(games)
@@ -306,6 +312,7 @@ def applyEditGame(choice):
 
 @app.route('/deletegame', methods=['POST'])
 @requires_auth
+@requires_managerRole
 def deleteGame():
     app.logger.debug("Entering deletegame")
     games = ourDB.getAllGames()
@@ -326,6 +333,7 @@ def deleteGame():
 
 @app.route('/applyDeletegame/<int:choice>', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def applyDeleteGame(choice):
     app.logger.debug("Entering applyDeleteGame")
     games = ourDB.getAllGames()
@@ -347,6 +355,7 @@ def applyDeleteGame(choice):
 
 @app.route('/players', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def managePlayers():
     # add player, edit player, cannot delete player if they have played a game
     # dump players
@@ -374,6 +383,7 @@ def managePlayers():
 
 @app.route('/editSelectPlayer', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def editSelectPlayer():
     app.logger.debug("We got to editSelectPlayer")
     allPlayers = ourDB.getAllPlayerDetailsForPlayerEdit()  # in obj classes
@@ -392,6 +402,7 @@ def editSelectPlayer():
 
 @app.route('/editPlayer/<int:player>', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def editPlayer(player):
     app.logger.debug('Entering editPlayer')
     playerList = formHandler.createLabelsForPlayers(ourDB.getAllPlayers(), action="allplayers")
@@ -413,6 +424,7 @@ def editPlayer(player):
 
 @app.route('/retirePlayer', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def retirePlayer():
     app.logger.debug('We got to retire player')
     allPlayers = ourDB.getAllPlayerDetailsForPlayerEdit()  # in obj classes
@@ -434,6 +446,7 @@ def retirePlayer():
 
 @app.route('/reactivatePlayer', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def reactivatePlayer():
     app.logger.debug('We got to reactivate player')
     playerList = formHandler.createLabelsForPlayers(ourDB.getAllPlayers(), action="reactivate")
@@ -454,6 +467,7 @@ def reactivatePlayer():
 
 @app.route('/transactions', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def manageTransactions():
     # add payment, edit payment, remove payment, autopayquick, view all transactions
     # needs to sort on transaction from recent first.
@@ -480,6 +494,7 @@ def manageTransactions():
 
 @app.route('/autoPay', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def autoPay():
     app.logger.info('Got to autoPay()')
     quickAutoPayForm = formHandler.AutopayforCurrentUser()
@@ -495,6 +510,7 @@ def autoPay():
 
 @app.route('/settings', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def manageSettings():
     # edit team name, export and import db json for all collections\
     app.logger.debug("Got to manageSettings()")
@@ -502,6 +518,7 @@ def manageSettings():
     settingsChangeForm = formHandler.CFFASettings(obj=ourSettings)
     dbExportForm = formHandler.DownloadJSON()  # just a submit button to redirect to url
     dbRecoveryForm = formHandler.UploadJSON()
+    googleUploadForm = formHandler.PopulateFromGoogleSheet()
 
     if settingsChangeForm.validate_on_submit():
         flashMessage = ourDB.updateTeamName(settingsChangeForm.teamName.data, session[constants.PROFILE_KEY].get('user_id', None))
@@ -512,11 +529,13 @@ def manageSettings():
                            settingsChangeForm=settingsChangeForm,
                            dbExportForm=dbExportForm,
                            dbRecoveryForm=dbRecoveryForm,
+                           dbImportGsheetForm=googleUploadForm,
                            cffauser=session[constants.PROFILE_KEY].get('name'))
 
 
 @app.route('/downloadjson', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def downloadJSON():
     app.logger.debug(" we got to downloadJSON")
     # call to extract all tables as json and place into zip to download via sendfile
@@ -528,13 +547,43 @@ def downloadJSON():
 
 @app.route('/uploadjson', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def uploadJSON():
     app.logger.debug("We got to uploadJSON()")
+    return(False)
+
+@app.route('/uploadGoogleConnector', methods=['GET', 'POST'])
+@requires_auth
+@requires_managerRole
+def uploadGoogleConnector():
+    app.logger.debug("We got to uploadGoogleConnector()")
+
+    googleUploadForm = formHandler.PopulateFromGoogleSheet()
+    if googleUploadForm.validate_on_submit():
+        filename = secure_filename(googleUploadForm.googleFile.data.filename)
+        googleUploadForm.googleFile.data.save('uploads/' + filename)
+        googleConnector = importDataFromGoogle.GoogleImporter(ourDB,
+                                                              "uploads/"+filename,
+                                                              googleUploadForm.sheetName.data,
+                                                              googleUploadForm.transactionSheetName.data,
+                                                              googleUploadForm.gameSheetName.data,
+                                                              googleUploadForm.summarySheetName.data,
+                                                              googleUploadForm.summarySheetStartRow.data,
+                                                              googleUploadForm.summarySheetEndRow.data)
+
+        flashMessage = googleConnector.downloadData()
+        flash(flashMessage)
+        return redirect(url_for('entryScreen'))
+
+
+    # should not get here
+    app.logger.critical("Managed to get past validate on uploadGoogleCollector(). Unexpected")
     return(False)
 
 
 @app.route('/manageUserAccess', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def manageUserAccess():
     app.logger.debug("Got to manageUserAccess()")
     userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
@@ -560,6 +609,7 @@ def manageUserAccess():
 
 @app.route('/editSelectUser', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def editSelectUser():
     app.logger.debug("Got to editSelectUser()")
     userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
@@ -577,6 +627,7 @@ def editSelectUser():
 
 @app.route('/editUserAccess/<int:user>', methods=['GET', 'POST'])
 @requires_auth
+@requires_managerRole
 def editUserAccess(user):
     app.logger.debug('Entering editUserAccess')
     userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
