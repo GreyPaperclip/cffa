@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Edit User Access{% endblock %}
+
+{% block activeEntry %} {% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}class="active"{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+{% block activeUserSettings %}active{% endblock %}
+{% block content %}
+
+<div class="container">
+    <p></p>
+
+    <form action="" method="POST" novalidate>
+        {{ editUserForm.hidden_tag() }}
+
+        <label> {{ editUserForm.name.label }}</label>
+        {{ editUserForm.name(class_="form-control form-control-sm") }}
+        {% for error in editUserForm.name.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+        <p></p>
+
+        <label> {{  editUserForm.authID.label }}</label>
+        {{ editUserForm.authID(class_="form-control form-control-sm") }}
+        {% for error in editUserForm.authID.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+        <p></p>
+
+        <label> {{  editUserForm.type.label }}</label>
+        {{ editUserForm.type(class_="form-control form-control-sm") }}
+        {% for error in editUserForm.type.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+        <p></p>
+
+        <div class="form-group">
+          <div class="custom-control custom-switch">
+                {{ editUserForm.revoked(class_="custom-control-input") }}
+              <label class="custom-control-label" for="revoked">{{  editUserForm.revoked.label }}</label>
+          </div>
+        </div>
+        {% for error in editUserForm.revoked.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
+        {% endfor %}
+
+        <p></p>
+        {{ editUserForm.submitEditUserAccess(class_='btn btn-primary') }}
+    </form>
+</div>
+
+{% endblock %}

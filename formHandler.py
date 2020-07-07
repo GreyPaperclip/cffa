@@ -239,6 +239,26 @@ class UploadJSON(FlaskForm):
                                                                                'CFFA DB exports only!')])
     submitRecovery = SubmitField("Reset and Recover DB")
 
+class addAccess(FlaskForm):
+    name = StringField("Name")
+    authID = StringField("Auth0 ID")
+    type = SelectField(u'UserType', choices=[('Manager', 'Manager'), ('Player', 'Player')])
+    submitAddAccess = SubmitField("Add User")
+
+class selectEditUserAccess(FlaskForm):
+    editUser = SelectField(u'name', coerce=int)
+    submitEditUser = SubmitField("Edit User")
+
+class selectRevokeUserAccess(FlaskForm):
+    revokeUser = SelectField(u'name', coerce=int)
+    submitRevokeUser = SubmitField("Revoke User")
+
+class EditUserAccess(FlaskForm):
+    name = StringField("Name")
+    authID = StringField("Auth0 ID")
+    type = SelectField(u'UserType', choices=[('Manager', 'Manager'), ('Player', 'Player')])
+    revoked = BooleanField('Revoked')
+    submitEditUserAccess = SubmitField("Commit changes to user")
 
 def createLabelsForGames(games):
     # games is a list of dicts from DB not a game class
@@ -326,3 +346,15 @@ def newTransactionFormToFootball(form, player):
                                               form.transactionDate.data)
     return(transaction)
 
+def createLabelsForUsers(users):
+    userLabels=[]
+    customID = 0
+    for user in users:
+        userLabels.append( (customID, user.name) )
+        customID+=1
+
+    return(userLabels)
+
+def editUserAccessFormToFootball(form):
+    user = footballClasses.CFFAUser(form.name.data, form.authID.data, form.type.data, form.revoked.data)
+    return(user)

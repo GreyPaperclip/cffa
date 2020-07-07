@@ -106,6 +106,18 @@ def requires_auth(f):
 
     return decorated
 
+def requires_managerRole(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        userID = session[constants.PROFILE_KEY].get('user_id')
+        playerConfirmed = ourDB.validateUserAsPlayerRole(userID)
+        if playerConfirmed == True:
+            return redirect('/playerSummary')
+
+        return f(*args, **kwargs)
+
+    return decorated
+
 
 # Controllers API
 @app.route('/')
@@ -154,6 +166,7 @@ def favicon():
 
 @app.route('/cffa')
 @requires_auth
+@requires_managerRole
 def entryScreen():
     # from username lets check tenancy. Use metadata in Auth0 for userID. This will be unique.
     if ourDB.loadTeamTablesForUserId(session[constants.PROFILE_KEY].get('user_id', None)) == False:
@@ -184,7 +197,8 @@ def onboarding():
             message="No user_id set in authenticator. Cannot on-board this user"
         else:
             message = ourDB.addTeam(addTeamForm.teamName.data,
-                                session[constants.PROFILE_KEY].get('user_id', None))
+                                session[constants.PROFILE_KEY].get('user_id', None),
+                                session[constants.PROFILE_KEY].get('name'))
 
         flash(message)
         # when switching back to entryScreen we will end up switching the db collections to the tenant
@@ -519,6 +533,84 @@ def uploadJSON():
     return(False)
 
 
+@app.route('/manageUserAccess', methods=['GET', 'POST'])
+@requires_auth
+def manageUserAccess():
+    app.logger.debug("Got to manageUserAccess()")
+    userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
+    addAccessForm = formHandler.addAccess()
+    selectEditUserAccessForm = formHandler.selectEditUserAccess(obj=userAccessData)
+    selectEditUserAccessForm.editUser.choices = formHandler.createLabelsForUsers(userAccessData)
+
+    # selectEditUserAccessForm and selectRevokeUserAccessForm redirect to different urls
+    if addAccessForm.validate_on_submit():
+        flashMessage = ourDB.addUserAccess(addAccessForm.name.data,
+                                           addAccessForm.authID.data,
+                                           addAccessForm.type.data,
+                                           session[constants.PROFILE_KEY].get('user_id', None))
+        flash(flashMessage)
+        return redirect(url_for('manageUserAccess'))
+
+    return render_template("manageUserAccess.html",
+                           Users=userAccessData,
+                           addAccessForm=addAccessForm,
+                           editUserForm=selectEditUserAccessForm,
+                           cffauser=session[constants.PROFILE_KEY].get('name'))
+
+
+@app.route('/editSelectUser', methods=['GET', 'POST'])
+@requires_auth
+def editSelectUser():
+    app.logger.debug("Got to editSelectUser()")
+    userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
+    addAccessForm = formHandler.addAccess()
+    selectEditUserAccessForm = formHandler.selectEditUserAccess(obj=userAccessData)
+    selectEditUserAccessForm.editUser.choices = formHandler.createLabelsForUsers(userAccessData)
+
+    if selectEditUserAccessForm.validate_on_submit():
+        # only got the player to edit, now redirect to
+        return redirect(url_for('editUserAccess', user=selectEditUserAccessForm.editUser.data))
+
+    # we should never get here
+    app.logger.info(" We should not get to this part of editSelectUser")
+    return(None)
+
+@app.route('/editUserAccess/<int:user>', methods=['GET', 'POST'])
+@requires_auth
+def editUserAccess(user):
+    app.logger.debug('Entering editUserAccess')
+    userAccessData = ourDB.getUserAccessData(session[constants.PROFILE_KEY].get('user_id', None))
+    #ourUsers = dict(userAccessData)  # so we can turn index numbers into keys
+    # userData = ourDB.getUserAccessDefaultsForEdit(ourUsers.get(user))
+    userData = userAccessData[user] # should return footballClasses user object
+
+    editUserAccessForm = formHandler.EditUserAccess(obj=userData)
+
+    if editUserAccessForm.validate_on_submit():
+        message = ourDB.editUserAccess (userData.name, formHandler.editUserAccessFormToFootball(editUserAccessForm))
+        flash(message)
+        return redirect(url_for('manageUserAccess'))
+
+    return render_template("editUserAccess.html",
+                           editUserForm=editUserAccessForm)
+
+
+@app.route('/playerSummary')
+@requires_auth
+def playerSummaryOnly():
+    if ourDB.loadTeamTablesForUserId(session[constants.PROFILE_KEY].get('user_id', None)) == False:
+        # this should not happen as this redirect page only occurs if the user_id exists already and is marked as a player.
+        # as safety lets redirect to logout!
+        logger.critical("User has gone to player Summary without valid userID")
+        return(redirect(url_for('logout')))
+
+    app.logger.debug('Rendering playerSummary.html')
+    return render_template("playerSummary.html",
+                           summary = ourDB.getSummaryForPlayer(session[constants.PROFILE_KEY].get('name', None)),
+                           ledger = ourDB.calcLedgerForPlayer(session[constants.PROFILE_KEY].get('name', None)),
+                           recentGames = ourDB.getGamesForPlayer(session[constants.PROFILE_KEY].get('name', None)),
+                           cffauser=session[constants.PROFILE_KEY].get('name'))
+
 if __name__ == "__main__":
-    app.run(host='192.168.1.83', port=env.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=env.get('PORT', 5000))
 

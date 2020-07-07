@@ -68,6 +68,8 @@ activePlayers = ourDB.getActivePlayerSummary()
 allPlayers = ourDB.getFullSummary()
 allTransactions = ourDB.getAllTransactions()
 
+# now testing DB class.
+
 lastgame = ourDB.getLastGameDetails()
 #pp.pprint(lastgame)
 activePlayers2 = ourDB.getActivePlayersForNewGame()

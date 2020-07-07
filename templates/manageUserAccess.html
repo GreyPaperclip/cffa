@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Manage User Access{% endblock %}
+
+{% block activeEntry %}{% endblock %}
+{% block activeGames %}{% endblock %}
+{% block activePlayers %}{% endblock %}
+{% block activeTransactions %}{% endblock %}
+{% block activeSettings %}{% endblock %}
+{% block activeUserSettings %}active{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#userSummary">CFFA User Access Summary </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#addAccess">Add User Access</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#editAccess">Edit User Access</a>
+  </li>
+</ul>
+
+<div id="manageAccess" class="tab-content">
+    <div id="userSummary" class="tab-pane fade show active">
+        <table id="userAccess" class="table table-hover" width="95%">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Authentication Id</th>
+                    <th>Type</th>
+                    <th>Revoked</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in Users %}
+                <tr>
+                    <td class="table-info">{{ user.name }}</td>
+                    <td>{{ user.authID }}</td>
+                    <td>{{ user.type }}</td>
+                    <td>{{ user.revoked }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="addAccess" class="tab-pane fade">
+        <form action="" method="post">
+            {{  addAccessForm.hidden_tag() }}
+            <p>
+            Enter Name:
+            {{  addAccessForm.name(class_="form-control form-control-sm") }}
+            {% for error in addAccessForm.name.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            Enter Auth ID:
+            {{ addAccessForm.authID(class_="form-control form-control-sm") }}
+            {% for error in addAccessForm.authID.errors %}
+                <span class="badge badge-warning">[{{ error }}]</span>
+            {% endfor %}
+            <p>
+            Select user type:
+            {{ addAccessForm.type(class_="form-control form-control-sm") }}
+            <p>{{ addAccessForm.submitAddAccess(class_='btn btn-primary') }}</p>
+        </form>
+    </div>
+
+    <div id="editAccess" class="tab-pane fade">
+        <form action="{{ url_for('editSelectUser') }}" method="post">
+            {{ editUserForm.hidden_tag() }}
+            {{ editUserForm.editUser() }}
+            <p></p>
+            {{ editUserForm.submitEditUser(class_='btn btn-primary') }}
+        </form>
+    </div>
+
+
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+
+{% endblock %}
