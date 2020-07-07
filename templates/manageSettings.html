@@ -24,9 +24,13 @@
   <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#import">Recover DB</a>
   </li>
-   <li class="nav-item">
+  <li class="nav-item">
     <a class="nav-link" data-toggle="tab" href="#googlesheet">Import GoogleSheet</a>
-   </li>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#reset">Delete all data</a>
+  </li>
+
 </ul>
 
 <div id="ManageSettings" class="tab-content">
@@ -136,6 +140,19 @@
 
             {{ dbImportGsheetForm.submitUpload(class_='btn btn-danger') }}
             <p></p>
+        </form>
+    </div>
+    <div id="reset" class="tab-pane fade">
+        <form action="{{ url_for('deleteAllData') }}" method="post">
+            <div class="card text-white bg-danger mb-3" style="max-width: 20rem;">
+                <div class="card-header">Delete All Data</div>
+                <div class="card-body">
+                    <h4 class="card-title">WARNING: This option will delete all data in the database!</h4>
+                    <p class="card-text"> No revert possible.</p>
+                    {{  deleteAllForm.hidden_tag() }}
+                    <p>{{ deleteAllForm.confirmDelete(class_='btn btn-primary') }}</p>
+                </div>
+            </div>
         </form>
     </div>
 

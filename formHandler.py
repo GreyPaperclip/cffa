@@ -270,6 +270,9 @@ class PopulateFromGoogleSheet(FlaskForm):
     summarySheetEndRow = IntegerField("End row on summary worksheet")
     submitUpload = SubmitField("Upload google sheet")
 
+class DeleteAll(FlaskForm):
+    confirmDelete = SubmitField("Confirm delete all data")
+
 def createLabelsForGames(games):
     # games is a list of dicts from DB not a game class
     gameLabels=[]

@@ -519,6 +519,7 @@ def manageSettings():
     dbExportForm = formHandler.DownloadJSON()  # just a submit button to redirect to url
     dbRecoveryForm = formHandler.UploadJSON()
     googleUploadForm = formHandler.PopulateFromGoogleSheet()
+    deleteAllForm = formHandler.DeleteAll()
 
     if settingsChangeForm.validate_on_submit():
         flashMessage = ourDB.updateTeamName(settingsChangeForm.teamName.data, session[constants.PROFILE_KEY].get('user_id', None))
@@ -530,6 +531,7 @@ def manageSettings():
                            dbExportForm=dbExportForm,
                            dbRecoveryForm=dbRecoveryForm,
                            dbImportGsheetForm=googleUploadForm,
+                           deleteAllForm=deleteAllForm,
                            cffauser=session[constants.PROFILE_KEY].get('name'))
 
 
@@ -578,6 +580,23 @@ def uploadGoogleConnector():
 
     # should not get here
     app.logger.critical("Managed to get past validate on uploadGoogleCollector(). Unexpected")
+    return(False)
+
+
+@app.route('/deleteAll', methods=['GET', 'POST'])
+@requires_auth
+@requires_managerRole
+def deleteAllData():
+    app.logger.warning("Entered deleteAllData() - about to reset DB")
+    deleteAllForm = formHandler.DeleteAll()
+    if deleteAllForm.validate_on_submit():
+        app.logger.warning("Deleting database")
+        message = ourDB.dropAllCollections(session[constants.PROFILE_KEY].get('user_id', None))
+        flash(message)
+        return redirect(url_for('entryScreen'))
+
+    # should not get here
+    app.logger.critical("Managed to get past validate on deleteAllData(). Unexpected")
     return(False)
 
 
