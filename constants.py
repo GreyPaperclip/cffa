@@ -1,4 +1,4 @@
-""" Constants file for Auth0's seed project
+""" Constants file for CFFA - this maps between .env/environment variables and constants used in CFFA.
 """
 AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID'
 AUTH0_CLIENT_SECRET = 'AUTH0_CLIENT_SECRET'

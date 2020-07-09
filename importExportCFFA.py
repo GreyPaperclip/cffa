@@ -1,3 +1,11 @@
+""" Library to handle export and import of DB data in JSOn format.
+
+Currently only implemented Export functionality
+
+TO DO: Destructive import
+
+"""
+
 import json
 import shutil
 from cffadb import dbinterface
@@ -17,15 +25,42 @@ logger.addHandler(ch)
 
 
 class CFFAImportExport:
+    """ Class def for import and export of DB data.
+
+    Attributes
+    ----------
+
+    dbconnection : dbinterface.FootballDB
+        CFFA do connection object with active connection
+
+    exportDirectory : str
+        Location of where to temporarily export data so that a zip archive can be built from the export from each
+        db collection
+        """
 
     dbconnection = None
     exportDirectory = "NotSet"
 
     def __init__(self, dbconnection, exportDirectory):
-        self.dbconnection = dbconnection
-        self.exportDirectory = exportDirectory
+        """ Initializer for this class. These are mandatory.
+
+        Parameters
+        ----------
+        dbconnection : dbinterface.FootballDB
+            CFFA do connection object with active connection
+
+        exportDirectory : str
+            Location of where to temporarily export data so that a zip archive can be built from the export from each
+            db collection
+
+        """
 
     def exportarchive(self):
+        """ Execute export by extracting all data and output each collection is json format. Then zip together. Web
+        server code (outside this scope) would then send the file to the user
+
+        """
+
         # use dbconnection to get each collection in turn and export into a json file in ExportImport
 
         collectionList = []

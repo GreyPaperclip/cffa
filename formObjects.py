@@ -1,3 +1,9 @@
+""" Unused file to scope out CFFA classes.
+
+TO DO: Remove from CFFA
+
+"""
+
 class player:
 
     name = "No Player set"

@@ -1,3 +1,10 @@
+""" Prototype code to access the Auth0 API to manage metadata for user roles.
+
+Not used as the API cannot be accessed using the same server/app as the web server so would need to be used in a
+backend/internal service only . TO DO: implement API integration microservice.
+
+"""
+
 import json, urllib
 import ssl
 import urllib.request
