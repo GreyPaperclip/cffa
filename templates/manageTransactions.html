@@ -43,8 +43,8 @@
             {% endfor %}
             <p>
             Select Date:
-            {{  addTransactionForm.transactionDate(class_="form-control form-control-sm") }}
-            {% for error in addTransactionForm.transactionDate.errors %}
+            {{  addTransactionForm.transactiondate(class_="form-control form-control-sm") }}
+            {% for error in addTransactionForm.transactiondate.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             <p>
@@ -59,7 +59,7 @@
             {% for error in addTransactionForm.amount.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
-            <p>{{ addTransactionForm.submitTrans(class_='btn btn-primary') }}</p>
+            <p>{{ addTransactionForm.submittrans(class_='btn btn-primary') }}</p>
         </form>
     </div>
 
@@ -69,13 +69,13 @@
     </div>
 
     <div id="autoPay" class="tab-pane fade">
-        <form action=" {{  url_for('autoPay') }}" method="post">
+        <form action=" {{  url_for('autopay') }}" method="post">
             {{ quickAutoPayForm.hidden_tag() }}
             <p> Player Name: {{  autoPayDetails.player }} </p>
-            <p> Type : {{  autoPayDetails.type }}</p>
+            <p> Type : {{  autoPayDetails.description }}</p>
             <p> Amount : {{ autoPayDetails.amount }}</p>
-            <p> Date : {{ autoPayDetails.transactionDate }} </p>
-            {{ quickAutoPayForm.submitAutoPay(class_='btn btn-primary') }}
+            <p> Date : {{ autoPayDetails.transactiondate }} </p>
+            {{ quickAutoPayForm.submitautopay(class_='btn btn-primary') }}
             <p>
         </form>
     </div>

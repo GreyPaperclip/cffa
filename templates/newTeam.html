@@ -21,21 +21,20 @@
         <p>Please register your team name to get started.</p>
     </div>
 
-<form action="" method="post">
+    <form action="" method="post">
     {{ addTeamForm.hidden_tag() }}
-    <p>
+    <p></p>
         Enter your new team name:
-        {{ addTeamForm.teamName(class_="form-control form-control-sm") }}
-        {% for error in addTeamForm.teamName.errors %}
+        {{ addTeamForm.teamname(class_="form-control form-control-sm") }}
+        {% for error in addTeamForm.teamname.errors %}
             <span class="badge badge-warning">[{{ error }}]</span>
         {% endfor %}
-        <p>
-    <p>{{ addTeamForm.submitNewTeam(class_='btn btn-primary') }}</p>
-    </p>
+    <p></p>
+    <p>{{ addTeamForm.submitnewteam(class_='btn btn-primary') }}</p>
 
 
 </form>
-
+</div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='jquery-3.5.1.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>

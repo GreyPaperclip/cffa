@@ -1,9 +1,11 @@
-
 import datetime
 import pprint
 from os import environ as env
 from dotenv import load_dotenv, find_dotenv
 import constants
+from cffadb import dbinterface
+from cffadb import footballClasses
+from cffadb import googleImport
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -22,68 +24,64 @@ GAME_SRC_WKSHEET = env.get(constants.GAME_SRC_WKSHEET)
 SUMMARY_SRC_WKSHEET = env.get(constants.SUMMARY_SRC_WKSHEET)
 CFFA_USERID = env.get(constants.CFFA_USERID)
 
-from cffadb import dbinterface
-from cffadb import footballClasses
-from cffadb import googleImport
-
-mongoConnectString = "mongodb://" + BACKEND_DBUSR + ":" + BACKEND_DBPWD + "@" + BACKEND_DBHOST + ":" + BACKEND_DBPORT + "/" + BACKEND_DBNAME
+mongo_connect_string = "mongodb://" + BACKEND_DBUSR + ":" + \
+                       BACKEND_DBPWD + "@" + BACKEND_DBHOST + ":" + \
+                       BACKEND_DBPORT + "/" + BACKEND_DBNAME
 
 pp = pprint.PrettyPrinter()
 
-ourDB = dbinterface.FootballDB(mongoConnectString, BACKEND_DBNAME)
-if ourDB.loadTeamTablesForUserId(CFFA_USERID) == False:
+ourDB = dbinterface.FootballDB(mongo_connect_string, BACKEND_DBNAME)
+if not ourDB.load_team_tables_for_user_id(CFFA_USERID):
     print(" Could not load DB tables")
     exit(-1)
 
 google = googleImport.Googlesheet(GOOGLEKEYFILE,
-                     GOOGLE_SHEET,
-                     TRANSACTION_SRC_WKSHEET,
-                     GAME_SRC_WKSHEET,
-                     SUMMARY_SRC_WKSHEET
-                     )
+                                  GOOGLE_SHEET,
+                                  TRANSACTION_SRC_WKSHEET,
+                                  GAME_SRC_WKSHEET,
+                                  SUMMARY_SRC_WKSHEET
+                                  )
 
-playersFromMainSheet = google.derivePlayers(24,66)
+players_from_main_sheet = google.derive_players(24, 66)
 
-ourDB.populatePayments(google.transactions)
-print (google.calcPlayerListPerGame())
-ourDB.populateGames(google.allgames)
-foobar = google.calcPlayerAdjustments(24,66)
-ourDB.populateAdjustments(foobar)
-#Calc summary then put into DB
-ourDB.calcPopulateTeamSummary(playersFromMainSheet)
-playerDetails = []
-for player in playersFromMainSheet:
+ourDB.populate_payments(google.transactions)
+print(google.calc_player_list_per_game())
+ourDB.populate_games(google.all_games)
+foobar = google.calc_player_adjustments(24, 66)
+ourDB.populate_adjustments(foobar)
+# Calc summary then put into DB
+ourDB.calc_populate_team_summary(players_from_main_sheet)
+player_details = []
+for player in players_from_main_sheet:
+    player_dict = dict(playerName=player,
+                       retiree=ourDB.should_player_be_retired(player),
+                       comment="Imported from GoogleSheet")
+    player_details.append(player_dict)
+ourDB.populate_team_players(player_details)
 
-    playerDict = dict(playerName=player,
-                      retiree=ourDB.shouldPlayerBeRetired(player),
-                      comment="Imported from GoogleSheet")
-    playerDetails.append(playerDict)
-ourDB.populateTeamPlayers(playerDetails)
-
-recentGames = ourDB.getRecentGames()
-allGames = ourDB.getAllGames()
-recentTransactions = ourDB.getRecentTransactions();
-#pp.pprint(recentTransactions)
-activePlayers = ourDB.getActivePlayerSummary()
-allPlayers = ourDB.getFullSummary()
-allTransactions = ourDB.getAllTransactions()
+recent_games = ourDB.get_recent_games()
+all_games = ourDB.get_all_games()
+recent_transactions = ourDB.get_recent_transactions()
+# pp.pprint(recent_transactions)
+active_players = ourDB.get_active_player_summary()
+all_players = ourDB.get_full_summary()
+all_transactions = ourDB.get_all_transactions()
 
 # now testing DB class.
 
-lastgame = ourDB.getLastGameDetails()
-#pp.pprint(lastgame)
-activePlayers2 = ourDB.getActivePlayersForNewGame()
-#pp.pprint(activePlayers2)
-inactivePlayers2 = ourDB.getInactivePlayersForNewGame()
-#pp.pprint(inactivePlayers2)
+last_game = ourDB.get_last_game_details()
+# pp.pprint(last_game)
+active_playersX = ourDB.get_active_players_for_new_game()
+# pp.pprint(active_playersX)
+inactive_playersX = ourDB.get_inactive_players_for_new_game()
+# pp.pprint(inactive_playersX)
 
-lastGameDetails = ourDB.getDefaultsForNewGame("Richard")
+last_game_details = ourDB.get_defaults_for_new_game("Richard")
 
-#print(ourDB.addGame(game))
+# print(ourDB.add_game(game))
 print("------------")
 
-dbid = ourDB.getLastGameDBID()
-print ("DBID", dbid)
-game = ourDB.getGameDetailsForEditDeleteForm(dbid, True)
+db_id = ourDB.get_last_game_db_id()
+print("DBID", db_id)
+game = ourDB.get_game_details_for_edit_delete_form(db_id, True)
 print(game)
-

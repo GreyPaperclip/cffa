@@ -38,46 +38,46 @@
             {{  addPlayerForm.hidden_tag() }}
             <p>
             Enter new player nickname:
-            {{  addPlayerForm.playerName }}
-            {% for error in addPlayerForm.playerName.errors %}
+            {{  addPlayerForm.playername }}
+            {% for error in addPlayerForm.playername.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             <p>
             [Optional] Enter a comment about the player:
             {{  addPlayerForm.comment }}
-            <p>{{ addPlayerForm.submitNew(class_='btn btn-primary') }}</p>
+            <p>{{ addPlayerForm.submitnew(class_='btn btn-primary') }}</p>
         </form>
     </div>
 
     <div id="EditPlayer" class="tab-pane fade">
-<form action=" {{  url_for('editSelectPlayer') }}" method="post">
+<form action=" {{  url_for('edit_select_player') }}" method="post">
     {{  editPlayerForm.hidden_tag() }}
     <p>
-    {{  editPlayerForm.oldPlayer }}
+    {{  editPlayerForm.oldplayer }}
     <p>
-    {{ editPlayerForm.submitEditPlayer(class_='btn btn-primary') }}</p>
+    {{ editPlayerForm.submiteditplayer(class_='btn btn-primary') }}</p>
 </form>
     </div>
 
     <div id="RetirePlayer" class="tab-pane fade">
-        <form action=" {{  url_for('retirePlayer') }}" method="post">
+        <form action=" {{  url_for('retire_player') }}" method="post">
             {{ retirePlayerForm.hidden_tag() }}
             <p>
                 Select player to retire:
-            {{ retirePlayerForm.retirePlayer }}
+            {{ retirePlayerForm.retireplayer }}
             <p>
-            {{ retirePlayerForm.submitRetire(class_='btn btn-danger') }}</p>
+            {{ retirePlayerForm.submitretire(class_='btn btn-danger') }}</p>
         </form>
     </div>
 
     <div id="ReactivatePlayer" class="tab-pane fade">
-        <form action=" {{  url_for('reactivatePlayer') }}" method="post">
+        <form action=" {{  url_for('reactivate_player') }}" method="post">
             {{ reactivatePlayerForm.hidden_tag() }}
             <p>
                 Select player to reactivate:
-            {{ reactivatePlayerForm.reactivatePlayer }}
+            {{ reactivatePlayerForm.reactivateplayer }}
             <p>
-            {{ reactivatePlayerForm.submitReactivate(class_='btn btn-danger') }}</p>
+            {{ reactivatePlayerForm.submitreactivate(class_='btn btn-danger') }}</p>
         </form>
     </div>
 

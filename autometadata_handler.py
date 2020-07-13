@@ -5,22 +5,24 @@ backend/internal service only . TO DO: implement API integration microservice.
 
 """
 
-import json, urllib
+import json
+import urllib
 import ssl
 import urllib.request
 import urllib.parse
 
-def addUserIDtoUser(session, domainURI, auth0clientID, auth0clientSecret, auth0Audience, userID):
+
+def add_user_id_to_user(session, domain_uri, auth0_client_id, auth0_client_secret, auth0_audience, user_id):
     try:
         # first get token
         ctx = ssl.create_default_context()
         ctx.load_default_certs()
 
-        base_url = "https://{domain}".format(domain=domainURI)
-        data = urllib.parse.urlencode([('client_id', auth0clientID),
-                                 ('client_secret', auth0clientSecret),
-                                 ('audience', auth0Audience),
-                                 ('grant_type', "client_credentials")])
+        base_url = "https://{domain}".format(domain=domain_uri)
+        data = urllib.parse.urlencode([('client_id', auth0_client_id),
+                                       ('client_secret', auth0_client_secret),
+                                       ('audience', auth0_audience),
+                                       ('grant_type', "client_credentials")])
         req = urllib.request.Request(base_url + "/oauth/token", data.encode('utf-8'))
         response = urllib.request.urlopen(req, context=ctx)
         oauth = json.loads(response.read())
@@ -32,7 +34,7 @@ def addUserIDtoUser(session, domainURI, auth0clientID, auth0clientSecret, auth0A
         req.add_header('Content-Type', 'application/json')
         req.get_method = lambda: 'PATCH'
 
-        data = urllib.request.Request([('app_metadata', ('userID', userID))])
+        data = urllib.request.Request([('app_metadata', ('userID', user_id))])
 
         try:
             response = urllib.request.Request(req, data)
@@ -48,6 +50,4 @@ def addUserIDtoUser(session, domainURI, auth0clientID, auth0clientSecret, auth0A
     except Exception as e:
         print("Updating metadata at Auth0 failed ")
 
-    return(True)
-
-
+    return True

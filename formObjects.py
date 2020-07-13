@@ -4,22 +4,24 @@ TO DO: Remove from CFFA
 
 """
 
-class player:
+
+class Player:
 
     name = "No Player set"
-    playedLastGame = False
+    played_last_game = False
 
-    def __init__(self, dbid, name, playedLastGame):
-        self.dbid - dbid
+    def __init__(self, db_id, name, played_last_game):
+        self.db_id = db_id
         self.name = name
-        self.playedLastGame - playedLastGame
+        self.played_last_game = played_last_game
 
-class game:
 
-    gamecost = float (0.00)
-    playerList = []
+class Game:
 
-    def __init__(self, gameCost, playerList):
-        self.gameCost = gameCost
-        self.playerList = playerList
+    game_cost = float(0.00)
+    player_list = []
+
+    def __init__(self, game_cost, player_list):
+        self.game_cost = game_cost
+        self.player_list = player_list
 

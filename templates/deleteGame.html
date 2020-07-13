@@ -14,17 +14,17 @@
 <div>
     <p class="text-secondary">
     Game Cost: £
-    {{ gamedetails.gameCost.to_decimal()|round(2) }}
+    {{ gamedetails.gamecost.to_decimal()|round(2) }}
     </p>
     <p class="text-secondary"> Game Date:
-    {{ gamedetails.gameDate }}
+    {{ gamedetails.gamedate }}
     </p>
     <p class="text-info">Booker:
     {{ gamedetails.booker }}
     </p>
     <form action="" method="POST" novalidate>
         {{ form.hidden_tag() }}
-        {{ form.confirmDel(class_='btn btn-danger') }}
+        {{ form.confirmdel(class_='btn btn-danger') }}
         <p></p>
     </form>
     <div id="player-fieldset">
@@ -36,11 +36,11 @@
             <th>Guests</th>
         </tr> </thead>
             <tbody>
-                {% for p in gamedetails.playerList %}
+                {% for p in gamedetails.playerlist %}
                     <tr>
                         <td class="table-info"> {% if p.playedLastGame %} &#10004; {% else %} &#10008; {% endif %}</td>
-                        <td> {% if p.pitchBooker %} &#10004; {% else %} &#10008; {% endif %} </td>
-                        <td> {{ p.playerName }}</td>
+                        <td> {% if p.pitchbooker %} &#10004; {% else %} &#10008; {% endif %} </td>
+                        <td> {{ p.playername }}</td>
                         <td> {{ p.guests }}</td>
                     </tr>
                 {% endfor %}

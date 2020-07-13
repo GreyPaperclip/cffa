@@ -40,32 +40,32 @@
             {{  settingsChangeForm.hidden_tag() }}
             <p>
             Enter new team name:
-            {{  settingsChangeForm.teamName(class_="form-control form-control-sm") }}
-            {% for error in settingsChangeForm.teamName.errors %}
+            {{  settingsChangeForm.teamname(class_="form-control form-control-sm") }}
+            {% for error in settingsChangeForm.teamname.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             <p>
-            <p>{{ settingsChangeForm.submitTeam(class_='btn btn-primary') }}</p>
+            <p>{{ settingsChangeForm.submitteam(class_='btn btn-primary') }}</p>
         </form>
     </div>
 
     <div id="export" class="tab-pane fade">
-        <form action="{{ url_for('downloadJSON') }}" method="post">
+        <form action="{{ url_for('download_json') }}" method="post">
             {{ dbExportForm.hidden_tag() }}
-            {{ dbExportForm.submitDownload(class_='btn btn-danger') }}
+            {{ dbExportForm.submitdownload(class_='btn btn-danger') }}
             <p>
         </form>
     </div>
 
     <div id="import" class="tab-pane fade">
-        <form action="{{  url_for('uploadJSON') }}" method="post">
+        <form action="{{ url_for('upload_json') }}" method="post">
             {{ dbRecoveryForm.hidden_tag() }}
             WARNING: Not implemented!
-            <p> Select CFFA archive file :
+            <p> Select CFFA archive file : </p>
             <div class="form-group">
             <div class="input-group mb-3">
                 <div class="custom-file">
-                    {{  dbRecoveryForm.selectArchiveFile(class_="custom-file-input") }} </p>
+                    {{  dbRecoveryForm.selectarchivefile(class_="custom-file-input") }}
                     <label class="custom-file-label" for="inputGroupFile02">Choose file</label>
                 </div>
             <div class="input-group-append">
@@ -73,84 +73,84 @@
             </div>
             </div>
             </div>
-            {% for error in dbRecoveryForm.selectArchiveFile.errors %}
+            {% for error in dbRecoveryForm.selectarchivefile.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
-            {{ dbRecoveryForm.submitRecovery(class_='btn btn-danger') }}
+            {{ dbRecoveryForm.submitrecovery(class_='btn btn-danger') }}
             <p></p>
         </form>
     </div>
 
     <div id="googlesheet" class="tab-pane fade">
-        <form action="{{ url_for('uploadGoogleConnector') }}" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for('upload_google_connector') }}" method="post" enctype="multipart/form-data">
             {{ dbImportGsheetForm.hidden_tag() }}
             <div class="form-group">
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        {{  dbImportGsheetForm.googleFile(class_="custom-file-input") }} </p>
+                        <p> {{  dbImportGsheetForm.googlefile(class_="custom-file-input") }} </p>
                         <label class="custom-file-label" for="googleFile">Upload Google Key File</label>
                     </div>
                 </div>
             </div>
-            {% for error in dbImportGsheetForm.googleFile.errors %}
+            {% for error in dbImportGsheetForm.googlefile.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
 
             <p> Google Sheet Name:
-            {{ dbImportGsheetForm.sheetName(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.sheetName.errors %}
+            {{ dbImportGsheetForm.sheetname(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.sheetname.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
             <p> Transaction worksheet name
-            {{ dbImportGsheetForm.transactionSheetName(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.transactionSheetName.errors %}
+            {{ dbImportGsheetForm.transactionsheetname(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.transactionsheetname.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
             <p> Game worksheet name
-            {{ dbImportGsheetForm.gameSheetName(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.gameSheetName.errors %}
+            {{ dbImportGsheetForm.gamesheetname(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.gamesheetname.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
             <p> Summary worksheet name
-            {{ dbImportGsheetForm.summarySheetName(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.summarySheetName.errors %}
+            {{ dbImportGsheetForm.summarysheetname(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarysheetname.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
             <p> Summary data start row
-            {{ dbImportGsheetForm.summarySheetStartRow(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.summarySheetStartRow.errors %}
+            {{ dbImportGsheetForm.summarysheetstartrow(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarysheetstartrow.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
             <p> Summary data end row
-            {{ dbImportGsheetForm.summarySheetEndRow(class_="form-control form-control-sm") }}
-            {% for error in dbImportGsheetForm.summarySheetEndRow.errors %}
+            {{ dbImportGsheetForm.summarysheetendrow(class_="form-control form-control-sm") }}
+            {% for error in dbImportGsheetForm.summarysheetendrow.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
             {% endfor %}
             </p>
 
-            {{ dbImportGsheetForm.submitUpload(class_='btn btn-danger') }}
+            {{ dbImportGsheetForm.submitupload(class_='btn btn-danger') }}
             <p></p>
         </form>
     </div>
     <div id="reset" class="tab-pane fade">
-        <form action="{{ url_for('deleteAllData') }}" method="post">
+        <form action="{{ url_for('delete_all_data') }}" method="post">
             <div class="card text-white bg-danger mb-3" style="max-width: 20rem;">
                 <div class="card-header">Delete All Data</div>
                 <div class="card-body">
                     <h4 class="card-title">WARNING: This option will delete all data in the database!</h4>
                     <p class="card-text"> No revert possible.</p>
                     {{  deleteAllForm.hidden_tag() }}
-                    <p>{{ deleteAllForm.confirmDelete(class_='btn btn-primary') }}</p>
+                    <p>{{ deleteAllForm.confirmdelete(class_='btn btn-primary') }}</p>
                 </div>
             </div>
         </form>

@@ -13,6 +13,7 @@ Requires the cffadb module to execute. In tern this uses the gsheet package.
 from cffadb import googleImport
 from cffadb import dbinterface
 import logging
+
 logger = logging.getLogger("googleimporter")
 logger.setLevel(logging.DEBUG)
 # console handler
@@ -22,9 +23,10 @@ formatting = logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pat
 ch.setFormatter(formatting)
 logger.addHandler(ch)
 
-class GoogleImporter:
 
-    """ Class def for google importer - contaisn all the required data to successfully access and download football data.
+class GoogleImporter:
+    """ Class def for google importer - contaisn all the required data to successfully access and download football
+    data.
 
     Attributes
     ----------
@@ -32,31 +34,32 @@ class GoogleImporter:
     db : footballDB
         CFFA db class for the underlying mongoDB. Must be initialised and connected for population to work
 
-    keyfilename : str
+    key_filename : str
         Filename for the json key file from google. This is stored in the webserver under uploads and is not accessible
-        publically.
+        externally.
 
-    gsheetName : str
+    gsheet_name : str
         Name of google sheet
 
-    transactionsWorksheet : str
+    transactions_worksheet : str
         Worksheet name in your google sheet with transaction data
 
-    gameWorksheet: str
+    game_worksheet: str
         Worksheet name in your google sheet with game data
 
-    summaryWorksheet: str
+    summary_worksheet: str
         Worksheet name in your google sheet with summary data showing things such as balances, games played etc
 
-    summaryRowStart: int
+    summary_row_start: int
         The summary sheet might not summarise from the first tow. Specify from which row to import
 
-    summaryRowEnd: int
+    summary_row_end: int
         The summary sheet might have lots of other data. States which row to stop importing from.
 
     """
 
-    def __init__(self, databaseObj, keyfile, gsheetName, transactionsWorksheet, gameWorksheet, summaryWorksheet, summaryRowStart, summaryRowEnd):
+    def __init__(self, database_obj, keyfile, gsheet_name, transactions_worksheet, game_worksheet,
+                 summary_worksheet, summary_row_start, summary_row_end):
         """ Configure the object with the necessary data to connect and import from a google sheet.
 
         Parameters
@@ -65,40 +68,40 @@ class GoogleImporter:
     db : footballDB
         CFFA db class for the underlying mongoDB. Must be initialised and connected for population to work
 
-    keyfilename : str
+    key_filename : str
         Filename for the json key file from google. This is stored in the webserver under uploads and is not accessible
-        publically.
+        outside of the server.
 
-    gsheetName : str
+    gsheet_name : str
         Name of google sheet
 
-    transactionsWorksheet : str
+    transactions_worksheet : str
         Worksheet name in your google sheet with transaction data
 
-    gameWorksheet: str
+    game_worksheet: str
         Worksheet name in your google sheet with game data
 
-    summaryWorksheet: str
+    summary_worksheet: str
         Worksheet name in your google sheet with summary data showing things such as balances, games played etc
 
-    summaryRowStart: int
+    summary_row_start: int
         The summary sheet might not summarise from the first tow. Specify from which row to import
 
-    summaryRowEnd: int
+    summary_row_end: int
         The summary sheet might have lots of other data. States which row to stop importing from.
 
         """
 
-        self.db = databaseObj
-        self.keyfilename = keyfile
-        self.gsheetName = gsheetName
-        self.transactionsWorksheet = transactionsWorksheet
-        self.gameWorksheet = gameWorksheet
-        self.summaryWorksheet = summaryWorksheet
-        self.summaryRowStart = summaryRowStart
-        self.summaryRowEnd = summaryRowEnd
+        self.db = database_obj
+        self.key_filename = keyfile
+        self.gsheet_name = gsheet_name
+        self.transactions_worksheet = transactions_worksheet
+        self.game_worksheet = game_worksheet
+        self.summary_worksheet = summary_worksheet
+        self.summary_row_start = summary_row_start
+        self.summary_row_end = summary_row_end
 
-    def downloadData(self):
+    def download_data(self):
         """ Calls a series of methods on both the googleImport and footballDB objects to obtain and populate data. Note
         that the logic reads each worksheet in full and populates documents/collections accordingly.
 
@@ -106,11 +109,6 @@ class GoogleImporter:
         The logic will remove all prior collections prior to population so this is replace not append logic.
 
         TO DO: error handling!
-
-        Parameters
-        ----------
-
-        None
 
         Returns
         -------
@@ -120,31 +118,28 @@ class GoogleImporter:
 
         """
 
-        google = googleImport.Googlesheet(self.keyfilename,
-                                          self.gsheetName,
-                                          self.transactionsWorksheet,
-                                          self.gameWorksheet,
-                                          self.summaryWorksheet)
+        google = googleImport.Googlesheet(self.key_filename,
+                                          self.gsheet_name,
+                                          self.transactions_worksheet,
+                                          self.game_worksheet,
+                                          self.summary_worksheet)
 
-        mainPlayers = google.derivePlayers(self.summaryRowStart,
-                                           self.summaryRowEnd)
+        main_players = google.derive_players(self.summary_row_start,
+                                             self.summary_row_end)
 
-        self.db.populatePayments(google.transactions)
-        google.calcPlayerListPerGame()
-        self.db.populateGames(google.allgames)
-        adjustments =  google.calcPlayerAdjustments(self.summaryRowStart,self.summaryRowEnd)
-        self.db.populateAdjustments(adjustments)
-        self.db.calcPopulateTeamSummary(mainPlayers)
+        self.db.populate_payments(google.transactions)
+        google.calc_player_list_per_game()
+        self.db.populate_games(google.all_games)
+        adjustments = google.calc_player_adjustments(self.summary_row_start, self.summary_row_end)
+        self.db.populate_adjustments(adjustments)
+        self.db.calc_populate_team_summary(main_players)
 
-        playerDetails = []
-        for player in mainPlayers:
-            playerDict = dict(playerName=player,
-                              retiree=self.db.shouldPlayerBeRetired(player),
-                              comment="Imported from GoogleSheet")
-            playerDetails.append(playerDict)
-        self.db.populateTeamPlayers(playerDetails)
+        player_detalls = []
+        for player in main_players:
+            player_dict = dict(playerName=player,
+                               retiree=self.db.should_player_be_retired(player),
+                               comment="Imported from GoogleSheet")
+            player_detalls.append(player_dict)
+        self.db.populate_team_players(player_detalls)
 
-        return "Imported data from google sheet:" + self.gsheetName
-
-
-
+        return "Imported data from google sheet:" + self.gsheet_name

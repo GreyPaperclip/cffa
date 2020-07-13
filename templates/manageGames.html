@@ -31,7 +31,7 @@
             <fieldset class="form-group">
             {{ form.hidden_tag() }}
             <legend>Select Number of players</legend>
-                {% for subfield in form.noPlayers %}
+                {% for subfield in form.noplayers %}
                     <div class="form-check">
                         {{ subfield(class_="form-check-input") }}
                         {{ subfield.label(class_="form-check-label") }}
@@ -45,20 +45,20 @@
 
 
     <div id="EditGame" class="tab-pane fade" width="66%">
-        <form action="{{ url_for('editGame') }}" method="post">
+        <form action="{{ url_for('edit_game') }}" method="post">
             {{ editGameform.hidden_tag() }}
             {{ editGameform.game(class_="form-control") }}
             <p></p>
-            {{ editGameform.submitEdit(class_='btn btn-primary') }}
+            {{ editGameform.submitedit(class_='btn btn-primary') }}
         </form>
     </div>
 
     <div id="DeleteGame" class="tab-pane fade" width="66%">
-        <form action="{{ url_for('deleteGame') }}" method="post">
+        <form action="{{ url_for('delete_game') }}" method="post">
             {{ deleteGameform.hidden_tag() }}
             {{ deleteGameform.game(class_="form-control") }}
             <p></p>
-            {{ deleteGameform.submitDel(class_='btn btn-danger') }}
+            {{ deleteGameform.submitdel(class_='btn btn-danger') }}
         </form>
     </div>
 

@@ -16,9 +16,9 @@
     <form action="" method="POST" novalidate>
         {{ editPlayerForm.hidden_tag() }}
 
-        <label> {{ editPlayerForm.playerName.label }}</label>
-        {{ editPlayerForm.playerName(class_="form-control form-control-sm") }}
-        {% for error in editPlayerForm.playerName.errors %}
+        <label> {{ editPlayerForm.playername.label }}</label>
+        {{ editPlayerForm.playername(class_="form-control form-control-sm") }}
+        {% for error in editPlayerForm.playername.errors %}
                 <span class="badge badge-warning">[{{ error }}]</span>
         {% endfor %}
         <p></p>
@@ -42,7 +42,7 @@
         {% endfor %}
 
          <p></p>
-        {{ editPlayerForm.submitEdit(class_='btn btn-primary') }}
+        {{ editPlayerForm.submitedit(class_='btn btn-primary') }}
     </form>
 </div>
 

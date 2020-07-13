@@ -16,23 +16,23 @@
     <fieldset class="form-group">
         {{ form.hidden_tag() }}
 
-        <label> {{ form.gameCost.label }}</label>
-        {{ form.gameCost(class_="form-control form-control-sm") }}
-        {% for error in form.gameCost.errors %}
+        <label> {{ form.gamecost.label }}</label>
+        {{ form.gamecost(class_="form-control form-control-sm") }}
+        {% for error in form.gamecost.errors %}
             <span class="badge badge-warning">[{{ error }}]</span>
         {% endfor %}
 
 
-        <label> {{  form.gameDate.label }}</label>
-        {{ form.gameDate(class_="form-control form-control-sm") }}
-        {% for error in form.gameDate.errors %}
+        <label> {{  form.gamedate.label }}</label>
+        {{ form.gamedate(class_="form-control form-control-sm") }}
+        {% for error in form.gamedate.errors %}
             <span class="badge badge-warning">[{{ error }}]</span>
         {% endfor %}
 
         <p></p>
 
-        {% for error in form.playerList.errors %}
-            <span class="badge badge-warning"">[{{ error }}]</span>
+        {% for error in form.playerlist.errors %}
+            <span class="badge badge-warning">[{{ error }}]</span>
         {% endfor %}
 
         <div id="player-fieldset">
@@ -44,33 +44,33 @@
                     <th>Guests</th>
                 </thead>
                 <tbody>
-                    {% for p in form.playerList %}
+                    {% for p in form.playerlist %}
                         <tr>
                             {{ p.hidden_tag() }}
                             <td class="table-info text-center">
                                 <div class="form-group">
                                     <div class="custom-control custom-switch">
-                                        {{ p.playedLastGame(class_="custom-control-input") }}
-                                        <label class="custom-control-label" for="{{ p.playedLastGame.name }}"></label>
+                                        {{ p.playedlastgame(class_="custom-control-input") }}
+                                        <label class="custom-control-label" for="{{ p.playedlastgame.name }}"></label>
                                     </div>
                                 </div>
                             </td>
-                            {% for error in p.playedLastGame.errors %}
+                            {% for error in p.playedlastgame.errors %}
                                 <span class="badge badge-warning">[{{ error }}]</span>
                             {% endfor %}
                             <td class="table-info text-center">
                                  <div class="form-group">
                                     <div class="custom-control custom-switch">
-                                        {{ p.pitchBooker(class_="custom-control-input") }}
-                                        <label class="custom-control-label" for="{{ p.pitchBooker.name }}"></label>
+                                        {{ p.pitchbooker(class_="custom-control-input") }}
+                                        <label class="custom-control-label" for="{{ p.pitchbooker.name }}"></label>
                                     </div>
                                  </div>
                             </td>
-                            {% for error in p.pitchBooker.errors %}
+                            {% for error in p.pitchbooker.errors %}
                                 <span class="badge badge-warning">[{{ error }}]</span>
                             {% endfor %}
-                            <td class="table-info"> {{ p.playerName(size=16, maxlength=32, class_="form-control form-control-sm") }}</td>
-                            {% for error in p.playerName.errors %}
+                            <td class="table-info"> {{ p.playername(size=16, maxlength=32, class_="form-control form-control-sm") }}</td>
+                            {% for error in p.playername.errors %}
                                     <span class="badge badge-warning">[{{ error }}]</span>
                             {% endfor %}
                             <td class="table-info"> {{ p.guests(size=2, class_="form-control form-control-sm") }}</td>
