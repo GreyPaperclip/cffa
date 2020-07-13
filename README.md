@@ -88,22 +88,54 @@ BACKEND_DBPORT=<your MongoDB port number, often 27017>
 BACKEND_DBNAME=MongoDB database name>
 
 SECRET_KEY=<flask secret key used for flask encyption, for Dev env, for example use NotForProduction>
-PYTHONPATH=<absolute path to the cffa code dirctory: absolute path to the cffadb directory>
-EXPORTDIRECTORY=absolute path to a temporary directory used for data exporting>
+EXPORTDIRECTORY=absolute path to a temporary directory used for data exporting. Make sure this directory exists>
 ```
 
 > Prep virtual environment and start flask to listen on port 5000.
 
 ```shell
 $ python3 -m venv <path to your virtual cffa environment>
+$ source bin/activate
 $ cd <your cffa directory>
+$ pip3 install --upgrade pip
 $ pip3 install -r requirements.txt 
+$ [double check your .env file.
 $ export FLASK_APP=server.py
 $ export FLASK_ENV=development
+$ export PYTHONPATH=<path_to_parent_dir_of_cffadb_and_path_to_cffa_directory>
 $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key pem file>
 ```
 
+> Log into the application:
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3dBOerh6lT5EpI_pobsP63-EDducO5XoF2pZDt_jEmptzMj9NtIdgU9TMq7k4IXHhWthjfOVT-nxf1Yyf-zYaJ24JZbwM0Y5AbBk5UJLkF1-DktSI12o4Vx3lnXAzKwoi_nEeE81AFATgcBH6gOz4Gp=w1043-h560-no?authuser=0)]()
+
+> Enter your Auth0 CFFA user credentials:
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3eRtCVF2hv9HvR3-GJyTMlDko4lXWO619Km83MCYR-mBVR_1rDJvFZNUKd3fHRjun5VkPo1GoXDwx1aYS2JynLnFqckr9kXv2llAqb8-_M8QY6EmASTPUeteonj5YsdLJ1EUHUDtyNAyvDvHnpwD0_r=w492-h573-no?authuser=0)]()
+
+> Onboarding screen - enter your team name:
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3e3q2pb5YQVOOlZsrb5gCoGRXCQXVJMr0xxULSf6RREQNuWPwvxAQofIXP8-5pwY4LtMfAWp2D6cYDsi7JRr5JncBhKieF77-bBl5cyMuHpNy0BJDdikrBnelk4gNUBNvL9av-xnGLrOnQ1Ws9SecVh=w1156-h573-no?authuser=0)]()
+
+> No data yet!
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3cHMZnTLEeuVjX1oC7jMZqDsXzV4Nn_o0btZpCu54Sd_BEf-l7gtfiI-R6NZhxG3a3oZ89_-q5a17l1yCMOGAEAPcuDrVb50bQ4g1CQFrhJD5BCLfema9Acpz3XRMX7zlVqng3jFzA2NhvNrN7pCLZM=w1156-h368-no?authuser=0)]()
+
+> Add some players
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3cHipcS0K0yZjKEU8YTCs5QyIvN9gK4gJ5_ZxGjagHn_ejeFfODjoN9kRes4cYu7MojVq_-G0smWBkMHh-5YEnOgBBQV5LL_DBbOAwoRQsPZfFMjJiGhEvKP4poYBr6uXgAKH4NeW3Eqiu54LcIdncJ=w1145-h333-no?authuser=0)]()
+
+> Log a game
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3cUQmBdcfJ9YHovm25Oi-z6mgw7pu0cl7YqxBkXLIP7s5SNuYAt8oamo8A3obS0sOYVn0kLikmLP-3qAej2gDvXpKgSkntf-jspB2e62_f5CzQhEPr9X9iwcx4FdAyxjzC2UZy3pfeKbOPqZvswRhkk=w1154-h659-no?authuser=0)]()
+
+> Get Stats!
+
+[![](https://lh3.googleusercontent.com/pw/ACtC-3cQC28HXbqWCl6ZxXQ8gmJagLIC71I0BvHvGZUJnObk1CAJsUEKCIozjGyzYd2W4ntkkrTvJZDzUBeWkjosMauqIz1Ax34eOmCqwYdnwK1hU39bPZEASgxtwwQ0M0oHoWJxOvJYWbQDCj1EUj1FxNo2=w1158-h491-no?authuser=0)]()
 ---
+
+
 
 ## Features
 
