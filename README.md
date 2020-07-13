@@ -107,20 +107,20 @@ $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key pem f
 
 ## Features
 
-> Track sports games on a frequent or infrequent basis and log who played the same, and the booking cost.
-> Charge each attending playing the portion of the booking cost
-> A player can bring un-named guests (the player takes the guest portion of the cost)
-> Correct incorrectly entered games
-> Add, edit, retire players
-> Add transactions to cover cash, bank transfer or other payments
-> Review past games and transactions.
-> Manage user access. Managers have full access to functionality. Players can only see their balances and key stats
-> Import historical data from google sheet. Example data here: 
->https://docs.google.com/spreadsheets/d/1JDQ2vMr8q9ldu89m0TC0lus7X6hbeKt7OQGFMNfBjlo/edit?usp=sharing
-> Reset database and start over.
-> Export and download data (JSON format)
-> Dark mode Web interface supports mobile and desktop views.
-> Strong security with Auth0 integration
+* Track sports games on a frequent or infrequent basis and log who played the same, and the booking cost.
+* Charge each attending playing the portion of the booking cost
+* A player can bring un-named guests (the player takes the guest portion of the cost)
+* Correct incorrectly entered games
+* Add, edit, retire players
+* Add transactions to cover cash, bank transfer or other payments
+* Review past games and transactions.
+* Manage user access. Managers have full access to functionality. Players can only see their balances and key stats
+* Import historical data from google sheet. Example data here: 
+⋅⋅⋅https://docs.google.com/spreadsheets/d/1JDQ2vMr8q9ldu89m0TC0lus7X6hbeKt7OQGFMNfBjlo/edit?usp=sharing
+* Reset database and start over.
+* Export and download data (JSON format)
+* Dark mode Web interface supports mobile and desktop views.
+* Strong security with Auth0 integration
 
 ---
 
