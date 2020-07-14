@@ -85,7 +85,7 @@ BACKEND_DBPWD=<your MongoDB password for your football DB instance>
 BACKEND_DBUSR=<your MongoDB username for your football DB instance>
 BACKEND_DBHOST=<your MongoDB IP(s), hostname(s) comma separated>
 BACKEND_DBPORT=<your MongoDB port number, often 27017>
-BACKEND_DBNAME=MongoDB database name>
+BACKEND_DBNAME=<MongoDB database name>
 
 SECRET_KEY=<flask secret key used for flask encyption, for Dev env, for example use NotForProduction>
 EXPORTDIRECTORY=absolute path to a temporary directory used for data exporting. Make sure this directory exists>
@@ -103,7 +103,7 @@ $ [double check your .env file.
 $ export FLASK_APP=server.py
 $ export FLASK_ENV=development
 $ export PYTHONPATH=<path_to_parent_dir_of_cffadb_and_path_to_cffa_directory>
-$ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key pem file>
+$ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key file>
 ```
 
 > Log into the application:
