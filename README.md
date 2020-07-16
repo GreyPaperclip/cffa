@@ -24,17 +24,23 @@ Player View - see how much they owe the manager and a summary of their playing a
 
 ![Player View](https://lh3.googleusercontent.com/pw/ACtC-3dVwrHqBzUKZOW4c-PsoUzPMJmRbDhoSccWg2CbUE7K_8RYKLSJPNuHj8VsEkPAsjxDORbV1E1Z7Gp6EEMoL2uESI6bZeH7jn9ZT8qq7BGUHhSXiWhsQ0KteIflETRzpGP8eJW0PSYTjip7OykMfNoX=w576-h566-no)
 
-> --
 
-> Implemented using python, flask with bootstrap, wtforms with a mongodb backend. 
->Tutorials include:
->
->a) deployment on Raspberry Pi with Ubuntu 64bit server with Docker containers 
->
->b) scalable deployment on google cloud with kubernetes
 
->> Status: Beta. The application is functional but requires more extensive testing for production use.
->
+Implemented using python, flask with bootstrap, wtforms with a mongodb backend. 
+
+### Tutorials ###
+
+a) end-to-end deployment on Raspberry Pi with Ubuntu 64bit server with mongoDB, python and nginx reverse proxy Docker containers :
+
+[Raspberry PI containers]: https://github.com/GreyPaperclip/cffa/blob/master/Tutorials/RaspberryPI_deployment.md
+
+b) scalable deployment on google cloud with kubernetes:
+
+WIP
+
+### Beta ###
+
+The application is functional but requires more extensive testing for production use.
 
 ## Table of Contents
 
@@ -70,7 +76,7 @@ and your home router is set up to forward tcp traffic incoming on port 444 to po
 
 ### Simple Development Setup
 
-> Create the .env file in the cffa directory
+Create the .env file in the cffa directory
 
 ```shell
 AUTH0_CLIENT_ID=<your Auth0 App Client ID>
@@ -89,7 +95,7 @@ SECRET_KEY=<flask secret key used for flask encyption, for Dev env, for example 
 EXPORTDIRECTORY=absolute path to a temporary directory used for data exporting. Make sure this directory exists>
 ```
 
-> Prep virtual environment and start flask to listen on port 5000.
+Prep virtual environment and start flask to listen on port 5000.
 
 ```shell
 $ python3 -m venv <path to your virtual cffa environment>
@@ -104,31 +110,29 @@ $ export PYTHONPATH=<path_to_parent_dir_of_cffadb_and_path_to_cffa_directory>
 $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key file>
 ```
 
-> Log into the application:
+Log into the application:
 
-[![Log In](https://lh3.googleusercontent.com/pw/ACtC-3fSmp7A7M_0S6odC5mbar6u38Bvph12KuaC0VOH5RF67CmTgrpFLWrw2oQJdoZVEPObHSd3xTBkWOXgE1wFTzErnGTX8ch_5Jv_XN0tc0zG3B4dJknGHTmnMThXnR2GVspjQQaklp9N0pKJc6JX3Kef=w1043-h560-no)]()
-
-> Enter your Auth0 CFFA user credentials:
+![Log In](https://lh3.googleusercontent.com/pw/ACtC-3fSmp7A7M_0S6odC5mbar6u38Bvph12KuaC0VOH5RF67CmTgrpFLWrw2oQJdoZVEPObHSd3xTBkWOXgE1wFTzErnGTX8ch_5Jv_XN0tc0zG3B4dJknGHTmnMThXnR2GVspjQQaklp9N0pKJc6JX3Kef=w1043-h560-no)Enter your Auth0 CFFA user credentials:
 
 [![Credentials](https://lh3.googleusercontent.com/pw/ACtC-3fv6Ey15V5DldKxW_tW8zNw-k2cJSwSPAxMIig723Xt86qRy2hxyqV8A3LjmjKTusZ7WFDtxcTezW0a0ULkoD5fsttp1405OPFePHnIsA8xiSshZBflkWwePSOqSTFvlMuwUDrkjcQmxQbcyugCN2te=w492-h573-no)]()
 
-> Onboarding screen - enter your team name:
+Onboarding screen - enter your team name:
 
 [![Onboarding](https://lh3.googleusercontent.com/pw/ACtC-3f4m1WfFFDuh9Pjumpnc9pM_2AmqzDsaloWcOkgCnsuPlZYQ6i8Iz4LBZXMZh5oeJc6dQwfey4dy825HVLceF055meQYim1PBawHH1FG6kJM-cjRMo9bK9oskxkHlSkinwo2jFKhoYAFXr3JDBjhArX=w1156-h573-no)]()
 
-> No data yet!
+No data yet!
 
 [![No data](https://lh3.googleusercontent.com/pw/ACtC-3e2m-ON5I7-Xf6EP4R8qF0A227NMR9hhk30Bv9o2JI0axdSSL0oOZf2ppFiMw7PHtuKxUFh28i3LS7_xh9Ivew-oZZF0ka7OvhVRz-hgRONA-RJuuzmmB4sWg_EFzcWz1KOfnp6jFXMTX7LlsxzqyWG=w1156-h368-no)]()
 
-> Add some players
+Add some players
 
 [![Add Player](https://lh3.googleusercontent.com/pw/ACtC-3c_vIuQLkHviXa23Y294TPWqvxylDitggSXL8M8TBpAiHLe5D5e7Vv3WJAwKWtmd7bO-OVDDgK_hJB9ibr0xG8qZgYk7TLJSUG_8b-t91aEiYcG6Mb7k_XMujMf_lqEhg-fZhKs_dwHeBAympiEdvaz=w1145-h333-no)]()
 
-> Log a game
+Log a game
 
 [![Log Game](https://photos.google.com/share/AF1QipPtAGxyY1Hc7YOggtgwTCwK5z-yxXwG4rw2l9jUWZrIcfgDnC1HmKg7ioLW0vR-Ng/photo/AF1QipP5LeiWEuctRsxWMtunyXo1VKPrUWqRQsvO5PEq?key=NHZSeTdBVnVyVWVMLVF2LXRoeFJWNEhiZFFXaUlB)]()
 
-> Get Stats!
+Get Stats!
 
 [![Get Stats](https://lh3.googleusercontent.com/pw/ACtC-3c5BYQXtNHc6CHo0FB3fFFVm5HUJWRgkuzy7JI_jFFogOE_V2hEBDvCFEwrAKmDgVIk5qsNKJdQvuhqwMCmbVhBsTyac98nTqBVBw_l245afwdrAxN3tAJR0atrcDfIS1s-bw9fuLz-DNKjlG44q6EG=w1154-h659-no)]()
 ---
@@ -177,6 +181,12 @@ $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key file>
 Twitter prefered: @rsborrett
 
 ---
+
+## Credits ##
+
+Implementation was influenced and inspired by https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+
+Markcurtis1970 for the humour!
 
 ## License
 
