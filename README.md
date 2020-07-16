@@ -1,4 +1,4 @@
-<a href="https://github.com/GreyPaperclip/cffa"><img src="https://mafm.richardborrett.com/static/mafm_backdrop.jpg" title="Casual Football Finance Manager" alt="CFFA"></a>
+<a href="https://github.com/GreyPaperclip/cffa"><img src="https://lh3.googleusercontent.com/pw/ACtC-3emYHzct6Q9wvk-L7mp8MzrRDmTZaqoFJoUBLYBIUyEo7977-JQhekPDzZbzvOsHZzBVeQvi--2VsKjA5DMulSNeiZDvALGoxktsx0I1oONvsnRi3uKF9NmIzprwz_N6gz5ek3OnIZIM0oOFNu5jT-8=w828-h237-no" title="Casual Football Finance Manager" alt="CFFA"></a>
 
 <!-- [![Richard Borrett](https://github.com/GreyPaperclip/cffa)](https://github.com/GreyPaperclip/cffa) -->
 
@@ -22,9 +22,7 @@ Manager View - see how much is owed by who, input games, add transactions, add/r
 
 Player View - see how much they owe the manager and a summary of their playing and payment history
 
-[![](https://mafm.richardborrett.com/static/examplePlayerScreen.png)]()
-
-
+![Player View](https://lh3.googleusercontent.com/pw/ACtC-3dVwrHqBzUKZOW4c-PsoUzPMJmRbDhoSccWg2CbUE7K_8RYKLSJPNuHj8VsEkPAsjxDORbV1E1Z7Gp6EEMoL2uESI6bZeH7jn9ZT8qq7BGUHhSXiWhsQ0KteIflETRzpGP8eJW0PSYTjip7OykMfNoX=w576-h566-no)
 
 > --
 
@@ -108,31 +106,31 @@ $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key file>
 
 > Log into the application:
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3dBOerh6lT5EpI_pobsP63-EDducO5XoF2pZDt_jEmptzMj9NtIdgU9TMq7k4IXHhWthjfOVT-nxf1Yyf-zYaJ24JZbwM0Y5AbBk5UJLkF1-DktSI12o4Vx3lnXAzKwoi_nEeE81AFATgcBH6gOz4Gp=w1043-h560-no?authuser=0)]()
+[![Log In](https://lh3.googleusercontent.com/pw/ACtC-3fSmp7A7M_0S6odC5mbar6u38Bvph12KuaC0VOH5RF67CmTgrpFLWrw2oQJdoZVEPObHSd3xTBkWOXgE1wFTzErnGTX8ch_5Jv_XN0tc0zG3B4dJknGHTmnMThXnR2GVspjQQaklp9N0pKJc6JX3Kef=w1043-h560-no)]()
 
 > Enter your Auth0 CFFA user credentials:
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3eRtCVF2hv9HvR3-GJyTMlDko4lXWO619Km83MCYR-mBVR_1rDJvFZNUKd3fHRjun5VkPo1GoXDwx1aYS2JynLnFqckr9kXv2llAqb8-_M8QY6EmASTPUeteonj5YsdLJ1EUHUDtyNAyvDvHnpwD0_r=w492-h573-no?authuser=0)]()
+[![Credentials](https://lh3.googleusercontent.com/pw/ACtC-3fv6Ey15V5DldKxW_tW8zNw-k2cJSwSPAxMIig723Xt86qRy2hxyqV8A3LjmjKTusZ7WFDtxcTezW0a0ULkoD5fsttp1405OPFePHnIsA8xiSshZBflkWwePSOqSTFvlMuwUDrkjcQmxQbcyugCN2te=w492-h573-no)]()
 
 > Onboarding screen - enter your team name:
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3e3q2pb5YQVOOlZsrb5gCoGRXCQXVJMr0xxULSf6RREQNuWPwvxAQofIXP8-5pwY4LtMfAWp2D6cYDsi7JRr5JncBhKieF77-bBl5cyMuHpNy0BJDdikrBnelk4gNUBNvL9av-xnGLrOnQ1Ws9SecVh=w1156-h573-no?authuser=0)]()
+[![Onboarding](https://lh3.googleusercontent.com/pw/ACtC-3f4m1WfFFDuh9Pjumpnc9pM_2AmqzDsaloWcOkgCnsuPlZYQ6i8Iz4LBZXMZh5oeJc6dQwfey4dy825HVLceF055meQYim1PBawHH1FG6kJM-cjRMo9bK9oskxkHlSkinwo2jFKhoYAFXr3JDBjhArX=w1156-h573-no)]()
 
 > No data yet!
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3cHMZnTLEeuVjX1oC7jMZqDsXzV4Nn_o0btZpCu54Sd_BEf-l7gtfiI-R6NZhxG3a3oZ89_-q5a17l1yCMOGAEAPcuDrVb50bQ4g1CQFrhJD5BCLfema9Acpz3XRMX7zlVqng3jFzA2NhvNrN7pCLZM=w1156-h368-no?authuser=0)]()
+[![No data](https://lh3.googleusercontent.com/pw/ACtC-3e2m-ON5I7-Xf6EP4R8qF0A227NMR9hhk30Bv9o2JI0axdSSL0oOZf2ppFiMw7PHtuKxUFh28i3LS7_xh9Ivew-oZZF0ka7OvhVRz-hgRONA-RJuuzmmB4sWg_EFzcWz1KOfnp6jFXMTX7LlsxzqyWG=w1156-h368-no)]()
 
 > Add some players
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3cHipcS0K0yZjKEU8YTCs5QyIvN9gK4gJ5_ZxGjagHn_ejeFfODjoN9kRes4cYu7MojVq_-G0smWBkMHh-5YEnOgBBQV5LL_DBbOAwoRQsPZfFMjJiGhEvKP4poYBr6uXgAKH4NeW3Eqiu54LcIdncJ=w1145-h333-no?authuser=0)]()
+[![Add Player](https://lh3.googleusercontent.com/pw/ACtC-3c_vIuQLkHviXa23Y294TPWqvxylDitggSXL8M8TBpAiHLe5D5e7Vv3WJAwKWtmd7bO-OVDDgK_hJB9ibr0xG8qZgYk7TLJSUG_8b-t91aEiYcG6Mb7k_XMujMf_lqEhg-fZhKs_dwHeBAympiEdvaz=w1145-h333-no)]()
 
 > Log a game
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3cUQmBdcfJ9YHovm25Oi-z6mgw7pu0cl7YqxBkXLIP7s5SNuYAt8oamo8A3obS0sOYVn0kLikmLP-3qAej2gDvXpKgSkntf-jspB2e62_f5CzQhEPr9X9iwcx4FdAyxjzC2UZy3pfeKbOPqZvswRhkk=w1154-h659-no?authuser=0)]()
+[![Log Game](https://photos.google.com/share/AF1QipPtAGxyY1Hc7YOggtgwTCwK5z-yxXwG4rw2l9jUWZrIcfgDnC1HmKg7ioLW0vR-Ng/photo/AF1QipP5LeiWEuctRsxWMtunyXo1VKPrUWqRQsvO5PEq?key=NHZSeTdBVnVyVWVMLVF2LXRoeFJWNEhiZFFXaUlB)]()
 
 > Get Stats!
 
-[![](https://lh3.googleusercontent.com/pw/ACtC-3cQC28HXbqWCl6ZxXQ8gmJagLIC71I0BvHvGZUJnObk1CAJsUEKCIozjGyzYd2W4ntkkrTvJZDzUBeWkjosMauqIz1Ax34eOmCqwYdnwK1hU39bPZEASgxtwwQ0M0oHoWJxOvJYWbQDCj1EUj1FxNo2=w1158-h491-no?authuser=0)]()
+[![Get Stats](https://lh3.googleusercontent.com/pw/ACtC-3c5BYQXtNHc6CHo0FB3fFFVm5HUJWRgkuzy7JI_jFFogOE_V2hEBDvCFEwrAKmDgVIk5qsNKJdQvuhqwMCmbVhBsTyac98nTqBVBw_l245afwdrAxN3tAJR0atrcDfIS1s-bw9fuLz-DNKjlG44q6EG=w1154-h659-no)]()
 ---
 
 
@@ -169,7 +167,7 @@ $ flask run --host 0.0.0.0 --cert .<your ssl crt file> --key <your ssl key file>
 
 ## FAQ
 
-- **How do I do *specifically* so and so?**
+- **Open to feedback!**
     - Please ask and I'll expand this section.
 
 ---

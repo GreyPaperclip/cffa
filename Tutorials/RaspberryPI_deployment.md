@@ -1,26 +1,28 @@
-## CFFI end-to-end deployment on Raspberry PI (Model 3B) with docker containers
+## CFFA end-to-end deployment on Raspberry PI (Model 3B) with docker containers
 
 Solution requires:
 
-Raspberry PI 3B (or later) with a clean Ubuntu 64bit Server OS (20.04 tested). NB: Raspbian will not work as currently (as of June 2020) as this is a 32bit OS and recent MongoDB releases require a 64 bit OS. 
+Raspberry PI 3B (or later) with a clean Ubuntu 64bit Server OS (v20.04 tested). NB: Raspbian will not work as currently (as of June 2020) as this is a 32bit OS and recent MongoDB releases require a 64 bit OS. 
 
-The Raspberry PI will be located on a home network behind a standard home router firewall. Any devices in the home network will be able to access the Internet, but no traffic can enter the network unless firewall rules have been configured on the router. The tutorial includes details needed to enable firewall rules. The tutorial also assumes your Internet service provider has provisioned your router an external  static IP address.
+The Raspberry PI will be located on a home network behind a standard home router firewall. Any devices in the home network will be able to access the Internet, but no traffic can enter the network unless firewall rules have been configured on the router. The tutorial includes details needed to enable firewall rules. The tutorial also assumes your Internet service provider has provisioned your router with an static internet IP address.
 
 The tutorial will treat the Raspberry PI as headless, and another laptop is required to configure the Raspberry PI at the command line.
 
-The tutorial covers the use of selfsigned-certificates but the Appendix includes steps needed to use certified certificates by the free service, letsEncrypt.
+The tutorial covers the use of self-signed certificates however  Appendix 1 includes steps needed to use signed certificates by LetsEncrypt/certbot.
+
+The tutorial steps will be very similar, if not the same, on a traditional x86 server (or compute instance in the cloud) with Ubuntu installed.
 
 #### Assumptions ####
 
-This tutorial requires the user to have basic understanding of Unix/Linux including using the vi text editor.
+This tutorial requires the user to have basic understanding of Unix/Linux, Raspberry installation and use of the vi text editor. Alternative text editors such as emacs or nano can be substituted when the vi command is quoted.
 
 ## Architecture ##
 
-![](https://lh3.googleusercontent.com/V6ayzXWRSoufd3IkagWyUfJiGZaO4I8LGun_-bIkH8LGrcViUYGHJ2utJzEoVOPL4ei0fXfBoQsPgNBV3Nz9XEbKzzato4VIAPdf7DN355sxXDu0-5QjBVfg1UDzuGJcRooDaWxn15TuOGHDu-QWg0SR-b362gyGq65E2l9B2GFx2We2AZgSeoI6ELwRSGFpBn84EgUvqMFulCTPIBUZDZtxhBDcB0N0kFLheHEp6f4WBIamG25g4WrzYe4dW5Hc8-gD9NZ8dmkXl-25jya1zIp7Ejfror0hTgK4_m_gTqWiT7XLWC7r3fOadF9vs8Lh_Vpo6al6NdLDk1FlIclQ14fL1toIss-BFl0PRswwZDa5zHyMwhXaDTh8LDKejToayo_qubL_68lX_yTK9z1Gddk3qZhhrIhQfyvRHzSSvlDsE5EVfByK5_35rdHExTh73QQ5huE0wkjM7vtG-qO1m84Zcwa6ZhvKyCeYy9pthgVJwvvMaut5NKFqgW82CwdRWz6jIvE8VubVuKePrHCGMyIqYUjpq0rm6KYPF3gaHvBzoaJPv8YiAuFuoh0eKCSLrpe_SAlh0BTTH2NJYFO4Hg16UJiRkJETGtzu8bm8gWcRIasnrpj82JC-5H8XypisoCyPJPSVIPenXePKUXjOOPfDJGQAhsZq5-il4jvYDNPpbvjkpZCwnpuXGANa=w996-h706-no?authuser=0)
+![](https://lh3.googleusercontent.com/pw/ACtC-3eKji3yiy9ysWPbaFsoMoz0Txb_a96heJVV452z0fTABeaJz6KQoH6_-b83CijxOtCSntGvO2wCFf972ETh0c8l3AgZ2MaovtK918JNeiJIne1mt6SCcNVZRxWfx2b5ozhRTZKVkiakblCC_qWn8g4c=w864-h612-no)
 
 ### Initial Raspberry PI set up with Operating System ###
 
-1. Recommend a 16GB or larger memory card. From  https://ubuntu.com/download/raspberry-pi download the Ubuntu 20.04 **64bit** LTS image 
+1. I recommend a 16GB or larger memory card. From  https://ubuntu.com/download/raspberry-pi download the Ubuntu 20.04 **64bit** LTS image 
 
 2. Using this tutorial, https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview, burn the image onto a memory card using your laptop. Boot the Raspberry PI and connect remotely in step 4 as the Ubuntu user. NB: For step 4, we are using the headless option.  There is no need to install the desktop GUI in step 5.
 
@@ -126,7 +128,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     sudo apt install python3-pip
     ```
 
-15. As per https://docs.docker.com/engine/install/ubuntu/, remove any older traces of docker and install docker registry and GPG key. Configure the PI to use a stable repository not nightly or test
+15. As per https://docs.docker.com/engine/install/ubuntu/, remove any older traces of docker and install docker registry and GPG key. Configure the Raspberry Pi to use a stable repository instead nightly or test
 
     ```shell
     sudo apt-get remove docker docker-engine docker.io containerd runc
@@ -190,7 +192,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     docker pull mongo
     ```
 
-22. Confirm it is available:
+22. Confirm it is available under listed images:
 
     ```shell
     docker images
@@ -215,7 +217,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     docker pull python
     ```
 
-26. Also pull down nginx for the reverse proxy
+26. Pull down nginx for the reverse proxy
 
     ```shell
     docker pull nginx
@@ -236,7 +238,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     cd cffa
     ```
 
-29. Get the cffa and cffadb code and configuration files from GitHub
+29. Get the cffa and cffadb code and configuration files from GitHub. cffadb wil be located inside cffa.
 
     ```shell
     git clone https://github.com/GreyPaperclip/cffa
@@ -289,7 +291,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     sudo chmod a+r certs/cffa-selfsigned.key certs/cffa-selfsigned.crt
     ```
 
-34. Create a log directory for nginx and cffa and (for later on) directory used by lets-encrypt to validate certificates. NB: creation by root is intentional as nginx runs as root (it has to in order to listen to ports smaller that 1024).
+34. Create a log directory for nginx and cffa and (for later on) directory used by lets-encrypt to validate certificates. NB: creation by root is intentional as nginx runs as root (it has to in order to listen on ports smaller than 1024).
 
     ```bash
     mkdir log log/cffa
@@ -350,7 +352,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     }
     ```
 
-36. There is no need to build containers for nginx and MongoDB as the defaults can be used as downloaded. However CFFA container must be built first
+36. There is no need to build containers for nginx and MongoDB as the defaults can be used as downloaded. The CFFA container must be built before docker-compose is used to orchestrate deployment.
 
     ### Build CFFA container ###
 
@@ -372,7 +374,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
     exec gunicorn -b :5000 --certfile=/home/cffa/certs/cffa-selfsigned.crt --keyfile=/home/cffa/certs/cffa-selfsigned.key --access-logfile - --error-logfile - -w 1 server:app
     ```
 
-39. Now create the Dockerfile - this is used to build the container. Note the password on the first RUN line will need changing.
+39. Now create the Dockerfile - this is used to build the container. Note the password on the first RUN line should be changed.
 
     ```bash
     vi Dockerfile
@@ -518,11 +520,11 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
 
 47. Open your web browser (on laptop or mobile), and go to cffa.yourdomain.com. As self-signed certificates are being used you will need to authorised the browser to visit the website.
 
-    ![](https://lh3.googleusercontent.com/FCqaGmr3t-pEcfXtRdVGYvRoYwKM6ZBMbpNe-5ubo1uBwtZbcySCVAqEiqywExpdHgugY7u5aeBMfj06EzbVWtGpoDMDqmGEKfkShC7YmHpDDtPm197f3lBtRImqAj7DiYcrftF5-90yVgUmxEYtUm1JkWqxmt7rEyt2dDoy9frMYoO7llmQWtkr6FXrQgE509XODiimun2B_50E_5OzsVDOn_khVBhaPRvVfg5T9LU-QxZ095Qmfx9D_We3eXGz8dFWCW231x_htmLzZtgjZoGhsIINvjM5b4-7y8OYTa0SaVBdZ9RFp8kpb5mplE-TF8sSXHUX0bgAKaCsK-d_p-akZxw7hSYUmH7nw8-3z_pWmkpUjjsKztcCJIM07-R85-CWEO3UjnMc-HeVqbEWp7uhW9LZp9He47gjLXFHZWpfJuB10P3CAlJ0Up17PhUK0ItCeD7qGHHVQ7oHIfFoi-ulRtyDTwpui6n4YAFtaFdvi-oJlsiFIBhsG4r_pkMAzaImFYeOv52X1BAL72XB6ONY4rLq_3gJrJRT4O41eMnx9wB6uV1lj7BHtVZicAcXjxFdDYtLFIK4FHx7SGvMM7my0yOXwIVYutOooBiHjB5dQof6PS64TShrqxARNrTcnwvPY95jsb0u91ILxzwhvFurcvEGEit5mh1zltzClvi7Kx1jtmkaO840H4ze=w780-h370-no?authuser=0)
+    ![](https://lh3.googleusercontent.com/pw/ACtC-3fkbv4VFClM8dmkymD0nL5IBkiAEs0Sxec1G3mzSDWeEyZkGgLK2XrHpFVVQdUiyLsPVRcOYIvM_5qqnEsN94H15MpRsRzkM9vyTBbdu00sDe491R7Y0yFPedKW0vttZdBAEy6WjwsrnPD-ao1L7jve=w780-h370-no)
 
 48.  Fingers crossed you will now see the login prompt:
 
-    ![](https://lh3.googleusercontent.com/pw/ACtC-3dBOerh6lT5EpI_pobsP63-EDducO5XoF2pZDt_jEmptzMj9NtIdgU9TMq7k4IXHhWthjfOVT-nxf1Yyf-zYaJ24JZbwM0Y5AbBk5UJLkF1-DktSI12o4Vx3lnXAzKwoi_nEeE81AFATgcBH6gOz4Gp=w1043-h560-no?authuser=0)
+    ![](https://lh3.googleusercontent.com/pw/ACtC-3fSmp7A7M_0S6odC5mbar6u38Bvph12KuaC0VOH5RF67CmTgrpFLWrw2oQJdoZVEPObHSd3xTBkWOXgE1wFTzErnGTX8ch_5Jv_XN0tc0zG3B4dJknGHTmnMThXnR2GVspjQQaklp9N0pKJc6JX3Kef=w1043-h560-no)
 
     ### Shutdown and clean up ###
 
@@ -532,7 +534,7 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
         docker-compose stop
         ```
 
-    50. To remove the docker images for nginx, cffa and mongo
+    50. To remove the stored docker images for nginx, cffa and mongo
 
         ```bash
         docker image rm cffa:latest
@@ -559,8 +561,6 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
 
     Auth0 secrets online though!
 
-    
-
     2. Containers are terminating   soon after running docker-compose up -d:
 
     Use docker logs <container_name> to view logs, for example:
@@ -575,9 +575,9 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
 
     ```
     PermissionError: [Errno 13] Permission denied: '/home/cffa/logs/cffa_webserver.log'
-    
-     indicates that the  /home/ubuntu/cffa/log/cffa does not have write permissions on the raspberry PI, or perhaps the disk is full.
     ```
+
+     indicates that the  /home/ubuntu/cffa/log/cffa does not have write permissions on the raspberry PI, or perhaps the disk is full.
 
     b) cffa_flask log shows:
 
@@ -592,8 +592,142 @@ This tutorial requires the user to have basic understanding of Unix/Linux includ
 
     Cause: The certificate in /home/ubuntu/cffa/certs for cffa do not have the right read permissions
 
+    c) cffa_flask log shows:
+
+    ```
+    Traceback (most recent call last):
+      File "/home/cffa/venv/lib/python3.8/site-packages/gunicorn/workers/sync.py", line 129, in handle
+        client = ssl.wrap_socket(client, server_side=True,
+      File "/usr/local/lib/python3.8/ssl.py", line 1402, in wrap_socket
+        context.load_cert_chain(certfile, keyfile)
+    IsADirectoryError: [Errno 21] Is a directory
+    ```
+
+    Cause: the certificate files are appearing as directories in the container. Check the path of the mounted directory for your certificate file in docker-compose.yaml for validity.
+
+    
+
+    ### Appendix 1: Use certified ssl certificates.
+
+    Websites should use signed SSL certificates for https communications. Self-signed certificates are fine for development but certification is a necessary step towards a production deployments..  LetsEncrypt/certbot provides a free signed certificiates using the existing nginx configuration deployed with CFFA.
+
+    Back on step 34, we create a directory for letsEncrypt. LetsEncrypt/certbot uses this directory to place a test file via nginx in order to confirm that you have control over the domain in use.
+
+    The process is consists of two steps:
+
+    a) Execute certbot to obtain the certified certificate, 
+
+    b) Apply the signed certificate to cffa flask (boot.sh). This requires updates to the docker-compose deployment yaml which means a service interruption. It is not necessary to update nginx as nginx only redirects http port 80 traffic to use https against flask. Flask, in this deployment still executes all decryption.
+
+    **Note: In many cases a reverse proxy decrypts all traffic and communication between the proxy and flask would be unencrypted http. This reduces CPU load on the gunicorn flask server. However I encountered an issue with Auth0 integration failing if nginx executed the decryption instead of flask. This requires further investigation.**
+
+    Note that LetsEncrypt certificates expire after 3 months, so certbot needs to be execute to regenerate licenses on a regular basis. For more information go to https://letsencrypt.org
+
+    #### Steps to create and install signed certificates.
+
+    1) Shutdown the docker containers and install certbot
+
+    ```bash
+    cd $HOME/cffa
+    docker-compose down
+    sudo apt-get install certbot
+    ```
+
+    2) Execute certbot to generate the signed certificate for your domain. make sure the -d option is updated for your circumstances.
+
+    ```bash
+    sudo certbot certonly --webroot -w /home/ubuntu/cffa/letsencrypt/verification -d cffa.mydomain.com
+    ```
+
+    3) The certificates will be created in the directory below (replace mydomain with your domain).
+
+    ```bash
+    sudo ls -la /etc/letsencrypt/live/cffa.mydomain.com
+    ```
+
+    4) cffa_flask executes as a non-root user and this requires the private key. The private key is restricted to root by default. In this example we will enable read access but this is unadvisable in a production system. In practice it would be better to restrict the private key to the container only
+
+    ```bash
+    sudo chmod a+r /etc/letsencrypt/archive/cffa.mydomain.com/privkey1.pem
+    ```
+
+    5) Update the boot.sh script to use the signed certificates.
+
+    ```bash
+    vi $HOME/cffa/cffa/boot.sh
+    ```
+
+    ```bash
+    #!/bin/bash
+    source venv/bin/activate
+    exec gunicorn -b :5000 --certfile=/home/cffa/certs/cffa-signed.crt --keyfile=/home/cffa/certs/cffa-signed.key --access-logfile - --error-logfile - -w 1 server:app
+    ```
+
+
+    ~      
+
+    5) cffa_flask requires these keys and the location of these keys will be mounted when the cffa_flask container starts. Add the following two volumes to the $HOME/cffa/docker-compose.yaml file under the cffa_flask volumes section:
+
+                - /etc/letsencrypt/archive/cffa.mydomain.com/fullchain1.pem:/home/cffa/certs/cffa-signed.crt
+                - /etc/letsencrypt/archive/cffa.mydomain.com/privkey1.pem:/home/cffa/certs/cffa-signed.key
+    6) Rebuild the cffa container:
+
+    ​	NB: When building docker containers it is recommended to use versioning instead of cffa:latest, eg: cffa:0.0.1 For purposes of this tutorial this is sufficient for now but this tutorial could be improved in the future. 
+
+    ```bash
+    cd $HOME/cffa/cffa
+    docker build -t cffa:latest .
+    ```
+
+    7) Now start up the containers again:
+
+    ```bash
+    cd $HOME/cffa
+    docker-compose up -d
+    ```
+
+    8) If there are any issues with the certificates, it is likely flask will abort and the container will be shutdown. Use '`docker ps`' and '`docker logs cffa_flask`' to determine if the start up was successful
+
+    9) Once logged into CFFA, click on the padlock symbol in the URL bar to review the certificate in detail.
+
+    ![](https://lh3.googleusercontent.com/pw/ACtC-3eHBFHUZQzm_gGM3pf_wWJIsmvTxMaxBeTt9bD2KFtzzaLcTUa6rc_7b8Xr56wy0UtuO-9pvlmc71dSNKz48UP_IErzBq8Gf2vmBFNMOEfM9-4U27pQytV1Td2vkCwMmLFPiBp4kt8EWQwqnJSrRH5f=w584-h583-no)
+
     
 
     
+
+    ### Appendix 2. Auth0 Configuration
+
+    CFFA integrates with Auth0 and this requires a free-tier account. Go to auth0.com, and sign up for the region you are located (eg: EU or US). CFFA requires a "single page application" application to be created. To do this go to the Applications on the menu on the left hand side and Create Application:
+
+    ![](https://lh3.googleusercontent.com/pw/ACtC-3c_RMFdM0Pp_R8UPAy5Wwp6HaDeo1ZRIykZ_xkVc_fCDXhbLvORQWyF_tRciFEQU02xRr6AhiwnPic3PiWKdxUI350yvZjvFGHlZpLSAcAO1UDsghVMu2ykCq9GAcmuK8vsQKb9R3Nuop4OQtkmgsva=w613-h521-no)
+
+    
+
+    Under the QuickStart tab, enter python as the Regular Web App. Auth0 will now provide lots of information on how Auth0 can be integrated. CFFA follows these content.
+
+    Switch to the Settings tab to confirm your Domain, Client ID, Client Secret settings. These are required in step 42 when configuring the compose-docker.yaml file environment variables. 
+
+    The Application URIs for Login, Callback and Logout should be configured and saved. These will be based on your domain name, eg:
+
+    Application login URI
+
+    ```
+    https://cffa.mydomain.com/authorize
+    ```
+
+    Allowed Callback URLs
+
+    ```
+    https://cffa.mydomain.com/callback
+    ```
+
+    Allowed Logout URLs
+
+    ```
+    https://cffa.mydomain.com
+    ```
+
+    No further Auth0 configuration should be required.
 
     
