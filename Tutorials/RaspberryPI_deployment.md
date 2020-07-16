@@ -2,17 +2,27 @@
 
 Solution requires:
 
-Raspberry PI 3B (or later) with a clean Ubuntu 64bit Server OS (20.04 tested). NB: Raspbian will not work as currently (as of June 2020) 32bit only and recent MongoDB releases require a 64 bit OS. 
+Raspberry PI 3B (or later) with a clean Ubuntu 64bit Server OS (20.04 tested). NB: Raspbian will not work as currently (as of June 2020) as this is a 32bit OS and recent MongoDB releases require a 64 bit OS. 
 
-The Raspberry PI will be located on a home network behind a standard home router firewall. Any devices in the home network will be able to access the Internet, but no traffic can enter the network unless firewall rules have been configured on the router. The tutorial includes steps needed to enable firewall rules. The tutorial also assumes your Internet service provider has provisioned a static IP address.
+The Raspberry PI will be located on a home network behind a standard home router firewall. Any devices in the home network will be able to access the Internet, but no traffic can enter the network unless firewall rules have been configured on the router. The tutorial includes details needed to enable firewall rules. The tutorial also assumes your Internet service provider has provisioned your router an external  static IP address.
 
 The tutorial will treat the Raspberry PI as headless, and another laptop is required to configure the Raspberry PI at the command line.
+
+The tutorial covers the use of selfsigned-certificates but the Appendix includes steps needed to use certified certificates by the free service, letsEncrypt.
+
+#### Assumptions ####
+
+This tutorial requires the user to have basic understanding of Unix/Linux including using the vi text editor.
+
+## Architecture ##
+
+![](https://lh3.googleusercontent.com/V6ayzXWRSoufd3IkagWyUfJiGZaO4I8LGun_-bIkH8LGrcViUYGHJ2utJzEoVOPL4ei0fXfBoQsPgNBV3Nz9XEbKzzato4VIAPdf7DN355sxXDu0-5QjBVfg1UDzuGJcRooDaWxn15TuOGHDu-QWg0SR-b362gyGq65E2l9B2GFx2We2AZgSeoI6ELwRSGFpBn84EgUvqMFulCTPIBUZDZtxhBDcB0N0kFLheHEp6f4WBIamG25g4WrzYe4dW5Hc8-gD9NZ8dmkXl-25jya1zIp7Ejfror0hTgK4_m_gTqWiT7XLWC7r3fOadF9vs8Lh_Vpo6al6NdLDk1FlIclQ14fL1toIss-BFl0PRswwZDa5zHyMwhXaDTh8LDKejToayo_qubL_68lX_yTK9z1Gddk3qZhhrIhQfyvRHzSSvlDsE5EVfByK5_35rdHExTh73QQ5huE0wkjM7vtG-qO1m84Zcwa6ZhvKyCeYy9pthgVJwvvMaut5NKFqgW82CwdRWz6jIvE8VubVuKePrHCGMyIqYUjpq0rm6KYPF3gaHvBzoaJPv8YiAuFuoh0eKCSLrpe_SAlh0BTTH2NJYFO4Hg16UJiRkJETGtzu8bm8gWcRIasnrpj82JC-5H8XypisoCyPJPSVIPenXePKUXjOOPfDJGQAhsZq5-il4jvYDNPpbvjkpZCwnpuXGANa=w996-h706-no?authuser=0)
 
 ### Initial Raspberry PI set up with Operating System ###
 
 1. Recommend a 16GB or larger memory card. From  https://ubuntu.com/download/raspberry-pi download the Ubuntu 20.04 **64bit** LTS image 
 
-2. Using this tutorial, https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview, burn the image onto a memory card using your laptop. Boot the Raspberry PI and connect remotely in step 4 as the Ubuntu user. NB: For step 4, we are using the headless option.  No need to install the desktop GUI in step 5.
+2. Using this tutorial, https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview, burn the image onto a memory card using your laptop. Boot the Raspberry PI and connect remotely in step 4 as the Ubuntu user. NB: For step 4, we are using the headless option.  There is no need to install the desktop GUI in step 5.
 
    * As the Raspberry PI will be a webserver it is recommended to use a cabled ethernet connection instead of wi-fi as this will be more stable.
 
@@ -100,19 +110,21 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     sudo reboot
     ```
 
-    
-
     ### Install software components - pip3, docker and docker-compose, and pull down docker images. ###
 
 12. Log back in again (as ubuntu) with ssh
 
 13. Ubuntu 20.04 has python3 already installed. Check this with 
 
+    ```bash
     python3 --version
+    ```
 
-14. However pip3 is not installed. Install it:
+14. However pip3 is not installed. This is required for docker-compose later on. Install it:
 
+    ```bash
     sudo apt install python3-pip
+    ```
 
 15. As per https://docs.docker.com/engine/install/ubuntu/, remove any older traces of docker and install docker registry and GPG key. Configure the PI to use a stable repository not nightly or test
 
@@ -197,13 +209,17 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     docker-compose --version
     ```
 
-25. Now pull down Python into the Docker respository. For another day, the alpine version would be better as it is much smaller and lightweight. Alpine is used on the kubernetes google clould tutorial.
+25. Now pull down Python into the Docker respository. For another day, the alpine version would be better as it is much smaller and lightweight. Alpine is used on the kubernetes google cloud tutorial.
 
+    ```shell
     docker pull python
+    ```
 
 26. Also pull down nginx for the reverse proxy
 
+    ```shell
     docker pull nginx
+    ```
 
     ### Get CFFA files, pre-configure MongoDB and certs ###
 
@@ -220,29 +236,31 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     cd cffa
     ```
 
-29. Get the cffa and cffadb code and configuration files from git.
+29. Get the cffa and cffadb code and configuration files from GitHub
 
     ```shell
     git clone https://github.com/GreyPaperclip/cffa
+    cd cffa
     git clone https://github.com/GreyPaperclip/cffadb
     ```
 
-30. The storage directory for MongoDO will be mounted from the host OS to the MongoDB container. This is because a container is ephereal and all data is lost when a container is restarted. By mounting an OS directory this ensures data persistence. Provided the host directory exists MongoDB will initialise all files upon first startup.
+30. The storage directory for MongoDB will be mounted from the host OS to the MongoDB container. This is because a container is ephereal and all data is lost when a container is restarted. By mounting an OS directory this ensures data persistence. Provided the host directory exists MongoDB will initialise all files upon first startup.
 
     ```shell
-    sudo mkdir -p /etc/mongoFBdata
+    sudo mkdir -p /opt/mongoCFFA
     ```
 
-31. Define your MongoDB root username and password. For example:
+31. Define your own MongoDB root username and password as required by the MongoDB container when starting up. For example:
 
     ```shell
     export MONGO_ROOT_USERNAME=root
     export MONGO_ROOT_PASSWORD=mongopass
     ```
 
-32. Create a initialization script for MongoDB in $HOME/cffa. This script creates a DB user for CFFA to use. Note down username and password as this is configured in CFFA later on.
+32. Create a initialization script for MongoDB in $HOME/cffa. This script creates a DB user for CFFA to use. Note down username and password as this is configured in CFFA later on. The example file is also provided in the tutorial directory as downloaded during git clone earlier.
 
     ```shell
+    cd $HOME/cffa
     vi init-mongo.js
     ```
 
@@ -261,25 +279,24 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     )
     ```
 
-33. Create self-signed certs for nginx, CFFA and the proxy between nginx and CFFA
+33. Create self-signed certs for nginx, CFFA and the proxy between nginx and CFFA. Each cert request will prompt for details on location, server name and email details. As CFFA runs as non-root, we change permissions to read for the two CFFA cert files.
 
     ```bash
-    mkdir nginx
-    
-    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout nginx/nginx-selfsigned.key -out nginix/nginx-selfsigned.crt
-    
-    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout nginx/cffa-selfsigned.key -out nginx/cffa-selfsigned.crt
-    
-    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout nginx/nginx-proxy.key -out nginx/nginx-proxy.pem
+    mkdir nginx certs
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout certs/nginx-selfsigned.key -out certs/nginx-selfsigned.crt
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout certs/cffa-selfsigned.key -out certs/cffa-selfsigned.crt
+    sudo openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout certs/nginx-proxy.key -out certs/nginx-proxy.pem
+    sudo chmod a+r certs/cffa-selfsigned.key certs/cffa-selfsigned.crt
     ```
 
-34. Create a log directory for nginx and cffa and (for later on) directory used by lets-encrypt to validate certificates
+34. Create a log directory for nginx and cffa and (for later on) directory used by lets-encrypt to validate certificates. NB: creation by root is intentional as nginx runs as root (it has to in order to listen to ports smaller that 1024).
 
     ```bash
-    sudo mkdir /var/log/cffa /var/log/nginx /home/ubuntu/cffa/letsencrypt/verification
+    mkdir log log/cffa
+    sudo mkdir letsencrypt log/nginx letsencrypt/verification
     ```
 
-35. Create the reverse proxy configuration file. This will listen on port 80 and 443. All incoming requests will redirect to https. Nginx handles all static directory requests and will cache them instead of flask. NB: Ensure server_name is correct for your domain.
+35. Create the reverse proxy configuration file. This will listen on port 80 and 443. All incoming requests will redirect to https. Nginx handles all static directory requests and will cache them instead of flask. NB: Ensure server_name is correct for your domain. Note all paths are in the container, not on the ubuntu server as currently seen. Later on these directories will be 'mounted' so nginx can load the certifications and create logs in the cffa directories.
 
     ```bash
     vi nginx/reverse_proxy.conf
@@ -343,7 +360,7 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     cd $HOME/cffa/cffa
     ```
 
-38. Create the boot shell script. This is executed once the container has initialised:
+38. Create the boot shell script. This is executed once the container has initialised. The boot.sh script is also included as part of the cffa GitHub download.
 
     ```bash
     vi boot.sh
@@ -354,8 +371,6 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     source venv/bin/activate
     exec gunicorn -b :5000 --certfile=/home/cffa/certs/cffa-selfsigned.crt --keyfile=/home/cffa/certs/cffa-selfsigned.key --access-logfile - --error-logfile - -w 1 server:app
     ```
-
-    
 
 39. Now create the Dockerfile - this is used to build the container. Note the password on the first RUN line will need changing.
 
@@ -380,6 +395,7 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     COPY cffadb/__init__.py cffadb/constants.py cffadb/dbinterface.py cffadb/footballClasses.py cffadb/googleImport.py cffadb/setup.py cffadb/README.md ./cffadb/
     RUN mkdir templates static logs
     RUN mkdir ExportImport
+    RUN mkdir uploads
     RUN chmod +x boot.sh
     
     ENV PYTHONPATH /home/cffa/cffadb
@@ -392,90 +408,107 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
     ENTRYPOINT ["./boot.sh"]
     ```
 
-    
+40. Build the container. This will take some time - circa 15 minutes on a Raspberry PI 3B. Don't forget the full stop at the end of the command.
 
-40. Build the container. This will take some time.
-
+    ```bash
     docker build -t cffa:latest .
+    ```
+
+    You can review the image. Docker will also list nginx, python and mongo images.
+
+    ```bash
+    docker images
+    ```
 
     ### Create the docker-compose configuration yaml and start the services ###
 
 41. Change back to the home cffa directory
 
+    ```bash
     cd $HOME/cffa
+    ```
 
-42. Create the docker-compose.yaml file. Note files with <> require updating.
+42. Create the docker-compose.yaml file. Note settings with <> require updating. The sample is available in the tutorial directory as well. 
+
+    ```bash
+    vi docker-compose.yaml
+    ```
 
     ```yaml
-    1. vi docker-compose.yaml
+    # docker-compose.yaml
+    version: "3"
+    services:
+        database:
+            image: 'mongo'
+            container_name: 'footballMongoDB'
+            hostname: footballDB
+            environment:
+                - MONGO_INITDB_DATABASE=<The MongoDB football DB name - check your init-mongo.js db setting >
+                - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+                - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+            volumes:
+                    - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+                    - /opt/mongoCFFA:/data/db
+            ports:
+                    - '27017-27019:27017-27019'
+        reverseproxy:
+            container_name: reverse
+            hostname: reverse
+            image: nginx:latest
+            ports:
+                - 80:80
+                - 443:443
+            volumes:
+                - /home/ubuntu/cffa/letsencrypt/verification/:/etc/nginx/letsencrypt/verification/
+                - /home/ubuntu/cffa/nginx/reverse_proxy.conf:/etc/nginx/conf.d/default.conf
+                - /home/ubuntu/cffa/certs/nginx-selfsigned.crt:/etc/nginx/cert/nginx-selfsigned.crt
+                - /home/ubuntu/cffa/certs/nginx-selfsigned.key:/etc/nginx/cert/nginx-selfsigned.key
+                - /home/ubuntu/cffa/certs/nginx-proxy.pem:/etc/nginx/cert/nginx-proxy.pem
+                - /home/ubuntu/cffa/certs/nginx-proxy.key:/etc/nginx/cert/nginx-proxy.key
+                - /home/ubuntu/cffa/log/nginx:/var/log/cffa/
+                - /home/ubuntu/cffa/cffa/static:/opt/cffa/static
     
-       version: "3"
-       services:
-           database:
-               image: 'mongo'
-               container_name: 'footballMongoDB'
-               hostname: footballDB
-               environment:
-                   - MONGO_INITDB_DATABASE=<The MongoDB football DB name - check your init-mongo.js >
-                   - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
-                   - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
-               volumes:
-                       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-                       - /opt/mongoFBdata:/data/db
-               ports:
-                       - '27017-27019:27017-27019'
-           reverseproxy:
-               container_name: reverse
-               hostname: reverse
-               image: nginx:latest
-               ports:
-                   - 80:80
-                   - 443:443
-               volumes:
-                   - /home/ubuntu/cffa/letsencrypt/verification/:/etc/nginx/letsencrypt/verification/
-                   - /home/ubuntu/cffa/nginx/reverse_proxy.conf:/etc/nginx/conf.d/default.conf
-                   - /home/ubuntu/cffa/nginx/nginx-selfsigned.crt:/etc/nginx/cert/nginx-selfsigned.crt
-                   - /home/ubuntu/cffa/nginx/nginx-selfsigned.key:/etc/nginx/cert/nginx-selfsigned.key
-                   - /home/ubuntu/cffa/nginx/nginx-proxy.pem:/etc/nginx/cert/nginx-proxy.pem
-                   - /home/ubuntu/cffa/nginx/nginx-proxy.key:/etc/nginx/cert/nginx-proxy.key
-                   - /home/ubuntu/cffa/nginx/logs/:/var/log/cffa/
-                   - /home/ubuntu/cffa/cffa/static:/opt/cffa/static
-    
-       cffa_flask:
-          container_name: cffa_flask
-          hostname: cffa_flask
-          image: cffa:latest
-          # to debug if flask stops on start entrypoint: ["sh", "-c", "sleep 2073600"]
-          ports:
-               - 8000:5000
-          environment:
-               - SECRET_KEY=<a string to encrypt data by flask>
-               - AUTH0_CLIENT_ID=<your Client ID for CFFA app>
-               - AUTH0_DOMAIN=<your Auth0 Domain>
-               - AUTH0_CLIENT_SECRET=<Your Client Secret for CFFA app>
-               - AUTH0_CALLBACK_URL=<Your Client callback URL as configured in the Auth0 app configuration screen>
-               - AUTH0_AUDIENCE=<Your Audience URL at Auth0>
-               - BACKEND_DBPWD=<The MongoDB football DB password - check your init-mongo.js>
-               - BACKEND_DBUSR=<The MongoDB football username - check your init-mongo.js>
-               - BACKEND_DBHOST=database
-               - BACKEND_DBPORT=27017
-               - BACKEND_DBNAME=<The MongoDB football DB name - check your init-mongo.js >
-               - EXPORTDIRECTORY=/home/cffa/cffa/ExportImport
+        cffa_flask:
+            container_name: cffa_flask
+            hostname: cffa_flask
+            image: cffa:latest
+            # to debug if flask stops on start entrypoint: ["sh", "-c", "sleep 2073600"]
+            ports:
+                - 8000:5000
+            environment:
+                - SECRET_KEY=<a string to encrypt data by flask>
+                - AUTH0_CLIENT_ID=<your Client ID for CFFA app>
+                - AUTH0_DOMAIN=<your Auth0 Domain>
+                - AUTH0_CLIENT_SECRET=<Your Client Secret for CFFA app>
+                - AUTH0_CALLBACK_URL=<Your Client callback URL as configured in the Auth0 app configuration screen>
+                - AUTH0_AUDIENCE=<Your Audience URL at Auth0>
+                - BACKEND_DBPWD=<The MongoDB football DB password - check your init-mongo.js>
+                - BACKEND_DBUSR=<The MongoDB football username - check your init-mongo.js>
+                - BACKEND_DBHOST=database
+                - BACKEND_DBPORT=27017
+                - BACKEND_DBNAME=<The MongoDB football DB name - check your init-mongo.js >
+                - EXPORTDIRECTORY=/home/cffa/cffa/ExportImport
           volumes:
-               - /home/ubuntu/cffa/cffa/static:/home/cffa/static
-               - /home/ubuntu/cffa/cffa/templates:/home/cffa/templates
-               - /home/ubuntu/cffa/cffa/logs:/home/cffa/logs
+                - /home/ubuntu/cffa/cffa/static:/home/cffa/static
+                - /home/ubuntu/cffa/cffa/templates:/home/cffa/templates
+                - /home/ubuntu/cffa/log/cffa:/home/cffa/logs
+                - /home/ubuntu/cffa/certs/cffa-selfsigned.crt:/home/cffa/certs/cffa-selfsigned.crt
+                - /home/ubuntu/cffa/certs/cffa-selfsigned.key:/home/cffa/certs/cffa-selfsigned.key
     ```
 
     ### Start up the containers ###
 
 43. Start up the containers: 
 
+    ```shell
     docker-compose up -d
+    ```
 
 44. Check status of the containers, recommend running this several times as it can take a few minutes to start.
 
+    ```shell
     docker ps
+    ```
 
     ### Check networking ###
 
@@ -483,14 +516,84 @@ The tutorial will treat the Raspberry PI as headless, and another laptop is requ
 
 46. Log into your DNS provider for your domain name, and configure an A record to forward cffa.yourdomain.com to your router external IP address.
 
-47. Open your web browser (on laptop or mobile), and go to cffa.yourdomain.com. If successful you will see the login prompt:
+47. Open your web browser (on laptop or mobile), and go to cffa.yourdomain.com. As self-signed certificates are being used you will need to authorised the browser to visit the website.
+
+    ![](https://lh3.googleusercontent.com/FCqaGmr3t-pEcfXtRdVGYvRoYwKM6ZBMbpNe-5ubo1uBwtZbcySCVAqEiqywExpdHgugY7u5aeBMfj06EzbVWtGpoDMDqmGEKfkShC7YmHpDDtPm197f3lBtRImqAj7DiYcrftF5-90yVgUmxEYtUm1JkWqxmt7rEyt2dDoy9frMYoO7llmQWtkr6FXrQgE509XODiimun2B_50E_5OzsVDOn_khVBhaPRvVfg5T9LU-QxZ095Qmfx9D_We3eXGz8dFWCW231x_htmLzZtgjZoGhsIINvjM5b4-7y8OYTa0SaVBdZ9RFp8kpb5mplE-TF8sSXHUX0bgAKaCsK-d_p-akZxw7hSYUmH7nw8-3z_pWmkpUjjsKztcCJIM07-R85-CWEO3UjnMc-HeVqbEWp7uhW9LZp9He47gjLXFHZWpfJuB10P3CAlJ0Up17PhUK0ItCeD7qGHHVQ7oHIfFoi-ulRtyDTwpui6n4YAFtaFdvi-oJlsiFIBhsG4r_pkMAzaImFYeOv52X1BAL72XB6ONY4rLq_3gJrJRT4O41eMnx9wB6uV1lj7BHtVZicAcXjxFdDYtLFIK4FHx7SGvMM7my0yOXwIVYutOooBiHjB5dQof6PS64TShrqxARNrTcnwvPY95jsb0u91ILxzwhvFurcvEGEit5mh1zltzClvi7Kx1jtmkaO840H4ze=w780-h370-no?authuser=0)
+
+48.  Fingers crossed you will now see the login prompt:
 
     ![](https://lh3.googleusercontent.com/pw/ACtC-3dBOerh6lT5EpI_pobsP63-EDducO5XoF2pZDt_jEmptzMj9NtIdgU9TMq7k4IXHhWthjfOVT-nxf1Yyf-zYaJ24JZbwM0Y5AbBk5UJLkF1-DktSI12o4Vx3lnXAzKwoi_nEeE81AFATgcBH6gOz4Gp=w1043-h560-no?authuser=0)
 
-48. x
+    ### Shutdown and clean up ###
 
-49. y
+    49. To shut down the docker containers, execute:
 
-50. z
+        ```bash
+        docker-compose stop
+        ```
+
+    50. To remove the docker images for nginx, cffa and mongo
+
+        ```bash
+        docker image rm cffa:latest
+        docker image rm nginx:latest
+        docker image rm mongo:latest
+        ```
+
+    52. To remove cffa completely (be careful):
+
+        ```bash
+        sudo rm -rf /home/ubuntu/cffa
+        sudo rm -rf /opt/mongoCFFA
+        ```
+
+    ### Troubleshooting ###
+
+    1. Running docker-compose up -d shows the following error:
+
+       ```
+       ERROR: The Compose file './docker-compose.yaml' is invalid
+       ```
+
+    Use an online yaml checker - yaml is sensitive to white space and alignment. Careful not to paste your
+
+    Auth0 secrets online though!
+
+    
+
+    2. Containers are terminating   soon after running docker-compose up -d:
+
+    Use docker logs <container_name> to view logs, for example:
+
+    ```bash
+    docker logs cffa_flask
+    ```
+
+    There could be many many reasons for this. For example:
+
+    a) cffa_flask log shows:
+
+    ```
+    PermissionError: [Errno 13] Permission denied: '/home/cffa/logs/cffa_webserver.log'
+    
+     indicates that the  /home/ubuntu/cffa/log/cffa does not have write permissions on the raspberry PI, or perhaps the disk is full.
+    ```
+
+    b) cffa_flask log shows:
+
+    ```
+    Traceback (most recent call last):
+      File "/home/cffa/venv/lib/python3.8/site-packages/gunicorn/workers/sync.py", line 129, in handle
+        client = ssl.wrap_socket(client, server_side=True,
+      File "/usr/local/lib/python3.8/ssl.py", line 1402, in wrap_socket
+        context.load_cert_chain(certfile, keyfile)
+    PermissionError: [Errno 13] Permission denied
+    ```
+
+    Cause: The certificate in /home/ubuntu/cffa/certs for cffa do not have the right read permissions
+
+    
+
+    
 
     
