@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: cffa-ingress
+spec:
+  tls:
+  - secretName: cffa-secret 
+  rules:
+  - host: cffa.yourdomain.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: ingress-service-cffa
+          servicePort: 443

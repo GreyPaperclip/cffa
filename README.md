@@ -34,9 +34,21 @@ a) end-to-end deployment on Raspberry Pi with Ubuntu 64bit server with mongoDB, 
 
 [Raspberry PI containers]: https://github.com/GreyPaperclip/cffa/blob/master/Tutorials/RaspberryPI_deployment.md
 
-b) scalable deployment on google cloud with kubernetes:
+[Google Cloud kubernetes deployment via a Compute instance]: :https://github.com/GreyPaperclip/cffa/blob/master/Tutorials/GoogleCloud_CFFA_on_scalable_k8.md
+
+b) Scalable deployment on google cloud with kubernetes using a CentOS intermediary.
 
 WIP
+
+c) Scalable deployment on google cloud - remote build and deployment
+
+d) Scalable deployment on Microsoft Azure
+
+In plan
+
+e) Scalable deployment on AWS
+
+In plan
 
 ### Beta ###
 

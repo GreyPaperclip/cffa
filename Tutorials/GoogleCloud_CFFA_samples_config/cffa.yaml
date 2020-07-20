@@ -1,0 +1,59 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: cffa-flask-app
+  labels:
+    name: cffa-flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cffa-flask-app
+  template:
+    metadata:
+      name: cffa-flask-app
+      labels:
+        name: cffa-flask-app
+    spec:
+      volumes:
+        - name: pd-ssd-website-cffa
+          persistentVolumeClaim:
+            claimName: pd-ssd-website-storage
+            readOnly: true
+      containers:
+        - name: cffa-flask-app
+          image: gcr.io/cffa-scalable/cffa-app:v0.0.1
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: pd-ssd-website-cffa
+              mountPath: /home/cffa/shared
+              readOnly: true
+          env:
+            - name: SECRET_KEY
+              value: "a secret key"
+            - name: AUTH0_CLIENT_ID
+              value: "your Auth0 client ID"
+            - name: AUTH0_DOMAIN
+              value: "yourauth0domain.auth0.com"
+            - name: AUTH0_CLIENT_SECRET
+              value: "your client secret"
+            - name: AUTH0_CALLBACK_URL
+              value: "https://cffa.yourdomain.com/callback"
+            - name: BACKEND_DBPWD
+              value: "pearce1990"
+            - name: BACKEND_DBUSR
+              value: "footballdba"
+            - name: BACKEND_DBHOST
+              value: "mongod-0.mongodb-service,mongod-1.mongodb-service,mongod-2.mongodb-service"
+            - name: BACKEND_DBPORT
+              value: "27017"
+            - name: BACKEND_DBNAME
+              value: "footballDB"
+            - name: EXPORTDIRECTORY
+              value: "/home/cffa/ExportImport"

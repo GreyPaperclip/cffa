@@ -189,6 +189,28 @@ def requires_manager_role(f):
     return decorated
 
 
+def set_tenancy(f):
+    """ A decorator wrap to ensure the tenancy is set on every endpoint call.
+    In a kubernetes cluster of multiple CFFA flask apps, a load balancer will forward the request
+    onto any flask webserver. This also ensures concurrent user access with different tenancies do not
+    pick up the wrong tenancy in their session
+
+    Note to self: perhaps the ourDB object should be part of the session object as this would be retained
+    between each user request. This would mean the tenancy collection would be global and initialised on start up, and
+    ourDB would be set in the callback endpoint
+
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not ourDB.load_team_tables_for_user_id(session[constants.PROFILE_KEY].get('user_id', None)):
+            # new manager entry point, redirect to onboarding wizard
+            return redirect(url_for('onboarding'))
+
+        return f(*args, **kwargs)
+
+    return decorated
+
+
 # Controllers API
 @app.route('/')
 def home():
@@ -255,6 +277,7 @@ def favicon():
 @app.route('/cffa')
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def entry_screen():
     """ Main screen for manager. If user collections do not exist assumes new user and redirects to onboarding screen.
      """
@@ -306,6 +329,7 @@ def onboarding():
 @app.route('/games', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def manage_games():
     """ Functionality to manage games - add, edit, remove. The logic handles the response when adding a new game, but
     edit and delete game are redirected to their endpoints via the form action setting in the manage_games.html
@@ -338,6 +362,7 @@ def manage_games():
 @app.route('/newgame/<int:players>', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def new_game(players):
     """ Renders and processes the new game form.
 
@@ -370,6 +395,7 @@ def new_game(players):
 @app.route('/editgame', methods=['POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def edit_game():
     """  Processes edit game select form (ie: which game to edit).
     """
@@ -395,6 +421,8 @@ def edit_game():
 
 @app.route('/applyEditGame/<int:choice>', methods=['GET', 'POST'])
 @requires_auth
+@requires_manager_role
+@set_tenancy
 def apply_edit_game(choice):
     """  Processes edit game form rendering and form input processing. Unlike new game form this does not check the
     number of players selected.
@@ -425,6 +453,7 @@ def apply_edit_game(choice):
 @app.route('/deletegame', methods=['POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def delete_game():
     """  Processes delete game select form (ie: which game to delete). As it has been redirected from a completed
     form we should not get to the end of the function unless there are no games.
@@ -453,6 +482,7 @@ def delete_game():
 @app.route('/applyDeletegame/<int:choice>', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def apply_delete_game(choice):
     """  Processes delete game form rendering and form input processing.
 
@@ -480,6 +510,7 @@ def apply_delete_game(choice):
 @app.route('/players', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def manage_players():
     """ Functionality to manage players - add, edit, retire and reactivate. The logic handles the response when
     adding a new player, but edit, retire and reactivate players  are redirected to their endpoints via the form
@@ -517,6 +548,7 @@ def manage_players():
 @app.route('/editSelectPlayer', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def edit_select_player():
     """  Processes edit player select form (ie: which player to edit) and then redirects to edit player endpoint. Form
     should always validate as endpoint is a post redirect from the manage_players page.
@@ -541,6 +573,7 @@ def edit_select_player():
 @app.route('/editPlayer/<int:player>', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def edit_player(player):
     """  Renders and post processes the edit player form for the selected player.
 
@@ -569,6 +602,7 @@ def edit_player(player):
 @app.route('/retirePlayer', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def retire_player():
     """  Processes retire player select form (ie: which player to retire). Form
     should always validate as endpoint is a post redirect from the manage_players page.
@@ -596,6 +630,7 @@ def retire_player():
 @app.route('/reactivatePlayer', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def reactivate_player():
     """  Processes reactivate (from retirement) player select form (ie: which player to reactivate). Form
     should always validate as endpoint is a post redirect from the manage_players page.
@@ -623,6 +658,7 @@ def reactivate_player():
 @app.route('/transactions', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def manage_transactions():
     """ Functionality to manage transactions - add, edit, and show all. The logic handles the response when adding a new
     transaction, but edit and list transactions are redirected to their endpoints via the form action setting in the
@@ -660,6 +696,7 @@ def manage_transactions():
 @app.route('/autoPay', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def autopay():
     """  Processes thw autopay logic to automatically credit the manager (logged in user) with the value of the
      last played game. Form should always validate as endpoint is a post redirect from the manage_transactions page.
@@ -683,6 +720,7 @@ def autopay():
 @app.route('/settings', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def manage_settings():
     """ Functionality to manage settings and similar behaviour including edit team name, export and import data, import
      google sheet data and reset DB.  The logic handles the response when changing the team name  but the other actions
@@ -717,6 +755,7 @@ def manage_settings():
 @app.route('/downloadjson', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def download_json():
     """  Processes download of the DB in json format.  Form
     should always validate as endpoint is a post redirect from the manage_settings page.
@@ -734,6 +773,7 @@ def download_json():
 @app.route('/uploadjson', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def upload_json():
     """  Processes upload of the DB in json format.
 
@@ -746,6 +786,7 @@ def upload_json():
 @app.route('/uploadGoogleConnector', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def upload_google_connector():
     """  Processes the completed google import form. Form
     should always validate as endpoint is a post redirect from the manage_settings page.
@@ -780,6 +821,7 @@ def upload_google_connector():
 @app.route('/deleteAll', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def delete_all_data():
     """  Processes the DB deletion. Form
     should always validate as endpoint is a post redirect from the manage_settings page.
@@ -804,6 +846,7 @@ def delete_all_data():
 @app.route('/manageUserAccess', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def manage_user_access():
     """ Functionality to manage user access including adding users and editing users. The logic handles the response
     when adding a new user but editing user is redirected to that endpoint via the form action setting in the
@@ -835,6 +878,7 @@ def manage_user_access():
 @app.route('/editSelectUser', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def edit_select_user():
     """  Renders and processes the edit User form for user access. Form
     should always validate as endpoint is a post redirect from the manage_user_access page.
@@ -862,6 +906,7 @@ def edit_select_user():
 @app.route('/editUserAccess/<int:user>', methods=['GET', 'POST'])
 @requires_auth
 @requires_manager_role
+@set_tenancy
 def edit_user_access(user):
     """  Renders and post processes the edit user access  form for the selected user.
 
@@ -891,6 +936,7 @@ def edit_user_access(user):
 
 @app.route('/playerSummary')
 @requires_auth
+@set_tenancy
 def player_summary_only():
     """  Processes the page for player role users. This offers no form functionality but summary data of their accounts,
     game activity and other stats. Also provides a bank statement style transaction view since they started playing.
