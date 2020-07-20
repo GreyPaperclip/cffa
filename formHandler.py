@@ -78,9 +78,10 @@ class AddTeam(FlaskForm):
             return False
         result = True
 
-        if self.teamname.data in (item[1] for item in self.all_team_names):
-            self.playername.errors.append("Team name already in use. Choose a different one!")
-            result = False
+        for team in self.all_team_names:
+            if self.teamname.data == team.get("teamName", None):
+                self.playername.errors.append("Team name already in use. Choose a different one!")
+                result = False
 
         return result
 

@@ -928,7 +928,7 @@ kubectl scale deployment cffa-flask-app --replicas=X
 
 where X is the number of flask webservers. Note that more than 1 cffa-flask-app can run at the same time on the same kubernetes notes, so with a 5 node kubernetes clusters, it is possible to run 10 cffa-flask-apps.
 
-The load balancer will route any browser request to any of the flask webservers. If you are implementing a flask app, there is  a consideration as you cannot assume that a user always enters the app through the login page. In CFFA's case, there is [TO DO: will be shortly!] a decorator for each endpoint that ensures the user tenancy is set (otherwise the user is bounced to the onboarding page). If this logic is not implemented you will see a similar message when a web browser is directed to any other flask server that did not handle the login on the entryScreen endpoint.
+The load balancer will route any browser request to any of the flask webservers. If you are implementing a flask app, there is a consideration as you cannot assume that a user always enters the app through the login page. In CFFA's case, there is a decorator (set_tenancy) for each endpoint that ensures the user tenancy is set (otherwise the user is bounced to the onboarding page). If this logic is not implemented you will see a similar message when a web browser is directed to any other flask server that did not handle the login on the entryScreen endpoint.
 
 ```python
 {
