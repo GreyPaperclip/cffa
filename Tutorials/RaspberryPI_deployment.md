@@ -604,10 +604,12 @@ This tutorial requires the user to have basic understanding of Unix/Linux, Raspb
     ```
 
     Cause: the certificate files are appearing as directories in the container. Check the path of the mounted directory for your certificate file in docker-compose.yaml for validity.
-
     
-
-    ### Appendix 1: Use certified ssl certificates.
+    ```
+    
+    ```
+    
+    ## Appendix 1: Use certified ssl certificates.
 
     Websites should use signed SSL certificates for https communications. Self-signed certificates are fine for development but certification is a necessary step towards a production deployments..  LetsEncrypt/certbot provides a free signed certificiates using the existing nginx configuration deployed with CFFA.
 
@@ -623,10 +625,10 @@ This tutorial requires the user to have basic understanding of Unix/Linux, Raspb
 
     Note that LetsEncrypt certificates expire after 3 months, so certbot needs to be execute to regenerate licenses on a regular basis. For more information go to https://letsencrypt.org
 
-    #### Steps to create and install signed certificates.
+    ### Steps to create and install signed certificates. ###
 
     1) Shutdown the docker containers and install certbot
-
+    
     ```bash
     cd $HOME/cffa
     docker-compose down
@@ -634,100 +636,100 @@ This tutorial requires the user to have basic understanding of Unix/Linux, Raspb
     ```
 
     2) Execute certbot to generate the signed certificate for your domain. make sure the -d option is updated for your circumstances.
-
+    
     ```bash
     sudo certbot certonly --webroot -w /home/ubuntu/cffa/letsencrypt/verification -d cffa.mydomain.com
     ```
 
     3) The certificates will be created in the directory below (replace mydomain with your domain).
-
+    
     ```bash
     sudo ls -la /etc/letsencrypt/live/cffa.mydomain.com
     ```
 
     4) cffa_flask executes as a non-root user and this requires the private key. The private key is restricted to root by default. In this example we will enable read access but this is unadvisable in a production system. In practice it would be better to restrict the private key to the container only
-
+    
     ```bash
     sudo chmod a+r /etc/letsencrypt/archive/cffa.mydomain.com/privkey1.pem
     ```
 
     5) Update the boot.sh script to use the signed certificates.
-
+    
     ```bash
     vi $HOME/cffa/cffa/boot.sh
     ```
-
     ```bash
     #!/bin/bash
     source venv/bin/activate
     exec gunicorn -b :5000 --certfile=/home/cffa/certs/cffa-signed.crt --keyfile=/home/cffa/certs/cffa-signed.key --access-logfile - --error-logfile - -w 1 server:app
     ```
-
-
-    ~      
-
-    5) cffa_flask requires these keys and the location of these keys will be mounted when the cffa_flask container starts. Add the following two volumes to the $HOME/cffa/docker-compose.yaml file under the cffa_flask volumes section:
-
+   
+   6) cffa_flask requires these keys and the location of these keys will be mounted when the cffa_flask container starts. Add the following two volumes to the $HOME/cffa/docker-compose.yaml file under the cffa_flask volumes section:
+    
                 - /etc/letsencrypt/archive/cffa.mydomain.com/fullchain1.pem:/home/cffa/certs/cffa-signed.crt
                 - /etc/letsencrypt/archive/cffa.mydomain.com/privkey1.pem:/home/cffa/certs/cffa-signed.key
-    6) Rebuild the cffa container:
-
-    ​	NB: When building docker containers it is recommended to use versioning instead of cffa:latest, eg: cffa:0.0.1 For purposes of this tutorial this is sufficient for now but this tutorial could be improved in the future. 
-
+   
+   7) Rebuild the cffa container:
+    
+   NB: When building docker containers it is recommended to use versioning instead of cffa:latest, eg: cffa:0.0.1 For purposes of this tutorial this is sufficient for now but this tutorial could be improved in the future. 
+    
     ```bash
     cd $HOME/cffa/cffa
     docker build -t cffa:latest .
     ```
-
-    7) Now start up the containers again:
-
+    
+   8) Now start up the containers again:
+    
     ```bash
     cd $HOME/cffa
     docker-compose up -d
     ```
-
-    8) If there are any issues with the certificates, it is likely flask will abort and the container will be shutdown. Use '`docker ps`' and '`docker logs cffa_flask`' to determine if the start up was successful
-
-    9) Once logged into CFFA, click on the padlock symbol in the URL bar to review the certificate in detail.
-
-    ![](https://lh3.googleusercontent.com/pw/ACtC-3eHBFHUZQzm_gGM3pf_wWJIsmvTxMaxBeTt9bD2KFtzzaLcTUa6rc_7b8Xr56wy0UtuO-9pvlmc71dSNKz48UP_IErzBq8Gf2vmBFNMOEfM9-4U27pQytV1Td2vkCwMmLFPiBp4kt8EWQwqnJSrRH5f=w584-h583-no)
-
     
-
+   9) If there are any issues with the certificates, it is likely flask will abort and the container will be shutdown. Use '`docker ps`' and '`docker logs cffa_flask`' to determine if the start up was successful
     
-
-    ### Appendix 2. Auth0 Configuration
-
-    CFFA integrates with Auth0 and this requires a free-tier account. Go to auth0.com, and sign up for the region you are located (eg: EU or US). CFFA requires a "single page application" application to be created. To do this go to the Applications on the menu on the left hand side and Create Application:
-
-    ![](https://lh3.googleusercontent.com/pw/ACtC-3c_RMFdM0Pp_R8UPAy5Wwp6HaDeo1ZRIykZ_xkVc_fCDXhbLvORQWyF_tRciFEQU02xRr6AhiwnPic3PiWKdxUI350yvZjvFGHlZpLSAcAO1UDsghVMu2ykCq9GAcmuK8vsQKb9R3Nuop4OQtkmgsva=w613-h521-no)
-
+   10) Once logged into CFFA, click on the padlock symbol in the URL bar to review the certificate in detail.
     
+   ![](https://lh3.googleusercontent.com/pw/ACtC-3eHBFHUZQzm_gGM3pf_wWJIsmvTxMaxBeTt9bD2KFtzzaLcTUa6rc_7b8Xr56wy0UtuO-9pvlmc71dSNKz48UP_IErzBq8Gf2vmBFNMOEfM9-4U27pQytV1Td2vkCwMmLFPiBp4kt8EWQwqnJSrRH5f=w584-h583-no)
 
-    Under the QuickStart tab, enter python as the Regular Web App. Auth0 will now provide lots of information on how Auth0 can be integrated. CFFA follows these content.
 
-    Switch to the Settings tab to confirm your Domain, Client ID, Client Secret settings. These are required in step 42 when configuring the compose-docker.yaml file environment variables. 
+​    
 
-    The Application URIs for Login, Callback and Logout should be configured and saved. These will be based on your domain name, eg:
+​    
 
-    Application login URI
+   ### Appendix 2. Auth0 Configuration
+    
+   CFFA integrates with Auth0 and this requires a free-tier account. Go to auth0.com, and sign up for the region you are located (eg: EU or US). CFFA requires a "single page application" application to be created. To do this go to the Applications on the menu on the left hand side and Create Application:
+    
+   ![](https://lh3.googleusercontent.com/pw/ACtC-3c_RMFdM0Pp_R8UPAy5Wwp6HaDeo1ZRIykZ_xkVc_fCDXhbLvORQWyF_tRciFEQU02xRr6AhiwnPic3PiWKdxUI350yvZjvFGHlZpLSAcAO1UDsghVMu2ykCq9GAcmuK8vsQKb9R3Nuop4OQtkmgsva=w613-h521-no)
 
-    ```
+
+​    
+
+   Under the QuickStart tab, enter python as the Regular Web App. Auth0 will now provide lots of information on how Auth0 can be integrated. CFFA follows these content.
+    
+   Switch to the Settings tab to confirm your Domain, Client ID, Client Secret settings. These are required in step 42 when configuring the compose-docker.yaml file environment variables. 
+    
+   The Application URIs for Login, Callback and Logout should be configured and saved. These will be based on your domain name, eg:
+    
+   Application login URI
+    
+   ```
     https://cffa.mydomain.com/authorize
-    ```
-
-    Allowed Callback URLs
-
-    ```
-    https://cffa.mydomain.com/callback
-    ```
-
-    Allowed Logout URLs
-
-    ```
-    https://cffa.mydomain.com
-    ```
-
-    No further Auth0 configuration should be required.
-
+   ```
     
+   Allowed Callback URLs
+    
+   ```
+    https://cffa.mydomain.com/callback
+   ```
+    
+   Allowed Logout URLs
+    
+   ```
+    https://cffa.mydomain.com
+   ```
+    
+   No further Auth0 configuration should be required.
+
+
+​    
