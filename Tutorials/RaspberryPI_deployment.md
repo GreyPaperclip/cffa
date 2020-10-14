@@ -605,64 +605,62 @@ This tutorial requires the user to have basic understanding of Unix/Linux, Raspb
 
     Cause: the certificate files are appearing as directories in the container. Check the path of the mounted directory for your certificate file in docker-compose.yaml for validity.
     
-    ```
     
-    ```
+   ## Appendix 1: Use certified ssl certificates. ##
+
+   Websites should use signed SSL certificates for https communications. Self-signed certificates are fine for development but certification is a necessary step towards a production deployments..  LetsEncrypt/certbot provides a free signed certificiates using the existing nginx configuration deployed with CFFA.
+
+   Back on step 34, we create a directory for letsEncrypt. LetsEncrypt/certbot uses this directory to place a test file via nginx in order to confirm that you have control over the domain in use.
+
+   The process is consists of two steps:
+
+   a) Execute certbot to obtain the certified certificate, 
+
+   b) Apply the signed certificate to cffa flask (boot.sh). This requires updates to the docker-compose deployment yaml which means a service interruption. It is not necessary to update nginx as nginx only redirects http port 80 traffic to use https against flask. Flask, in this deployment still executes all decryption.
+
+   ** Note: In many cases a reverse proxy decrypts all traffic and communication between the proxy and flask would be unencrypted http. This reduces CPU load on the gunicorn flask server. However I encountered an issue with Auth0 integration failing if nginx executed the decryption instead of flask. This requires further investigation.**
+
+   Note that LetsEncrypt certificates expire after 3 months, so certbot needs to be execute to regenerate licenses on a regular basis. For more information go to https://letsencrypt.org
+
+   ### Steps to create and install signed certificates. ###
+
+   1) Shutdown the docker containers and install certbot
     
-    ## Appendix 1: Use certified ssl certificates.
-
-    Websites should use signed SSL certificates for https communications. Self-signed certificates are fine for development but certification is a necessary step towards a production deployments..  LetsEncrypt/certbot provides a free signed certificiates using the existing nginx configuration deployed with CFFA.
-
-    Back on step 34, we create a directory for letsEncrypt. LetsEncrypt/certbot uses this directory to place a test file via nginx in order to confirm that you have control over the domain in use.
-
-    The process is consists of two steps:
-
-    a) Execute certbot to obtain the certified certificate, 
-
-    b) Apply the signed certificate to cffa flask (boot.sh). This requires updates to the docker-compose deployment yaml which means a service interruption. It is not necessary to update nginx as nginx only redirects http port 80 traffic to use https against flask. Flask, in this deployment still executes all decryption.
-
-    **Note: In many cases a reverse proxy decrypts all traffic and communication between the proxy and flask would be unencrypted http. This reduces CPU load on the gunicorn flask server. However I encountered an issue with Auth0 integration failing if nginx executed the decryption instead of flask. This requires further investigation.**
-
-    Note that LetsEncrypt certificates expire after 3 months, so certbot needs to be execute to regenerate licenses on a regular basis. For more information go to https://letsencrypt.org
-
-    ### Steps to create and install signed certificates. ###
-
-    1) Shutdown the docker containers and install certbot
-    
-    ```bash
+   ```bash
     cd $HOME/cffa
     docker-compose down
     sudo apt-get install certbot
-    ```
+   ```
 
-    2) Execute certbot to generate the signed certificate for your domain. make sure the -d option is updated for your circumstances.
+   2) Execute certbot to generate the signed certificate for your domain. make sure the -d option is updated for your circumstances.
     
-    ```bash
+   ```bash
     sudo certbot certonly --webroot -w /home/ubuntu/cffa/letsencrypt/verification -d cffa.mydomain.com
-    ```
+   ```
 
-    3) The certificates will be created in the directory below (replace mydomain with your domain).
+   3) The certificates will be created in the directory below (replace mydomain with your domain).
     
-    ```bash
+   ```bash
     sudo ls -la /etc/letsencrypt/live/cffa.mydomain.com
-    ```
+   ```
 
-    4) cffa_flask executes as a non-root user and this requires the private key. The private key is restricted to root by default. In this example we will enable read access but this is unadvisable in a production system. In practice it would be better to restrict the private key to the container only
+   4) cffa_flask executes as a non-root user and this requires the private key. The private key is restricted to root by default. In this example we will enable read access but this is unadvisable in a production system. In practice it would be better to restrict the private key to the container only
     
-    ```bash
+   ```bash
     sudo chmod a+r /etc/letsencrypt/archive/cffa.mydomain.com/privkey1.pem
-    ```
+   ```
 
-    5) Update the boot.sh script to use the signed certificates.
+   5) Update the boot.sh script to use the signed certificates.
     
-    ```bash
+   ```bash
     vi $HOME/cffa/cffa/boot.sh
-    ```
-    ```bash
+   ```
+   
+   ```bash
     #!/bin/bash
     source venv/bin/activate
     exec gunicorn -b :5000 --certfile=/home/cffa/certs/cffa-signed.crt --keyfile=/home/cffa/certs/cffa-signed.key --access-logfile - --error-logfile - -w 1 server:app
-    ```
+   ```
    
    6) cffa_flask requires these keys and the location of these keys will be mounted when the cffa_flask container starts. Add the following two volumes to the $HOME/cffa/docker-compose.yaml file under the cffa_flask volumes section:
     
